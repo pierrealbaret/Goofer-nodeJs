@@ -25,5 +25,5 @@ stream.on('end', () => {
     console.log('fin de la lecture\r\n');
 });
 stream.write('initialize\r\n');
-stream.write("create\r\n");
+stream.write("populate\r\n");
 stream.write("print\r\n");

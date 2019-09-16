@@ -26,8 +26,8 @@ const server = net.createServer((socket) => {
         if(line === 'initialize') {
             console.log('write ID SOCKET');
             socket.write(`Your socket id is : ${socket.id} \r\n`, 'utf-8');
-        } else if(line === 'create') {
-            city.print();
+        } else if(line === 'populate') {
+            city.populate();
         } else if(line === 'print') {
             city.print();
         }

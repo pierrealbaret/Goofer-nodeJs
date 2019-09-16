@@ -8,7 +8,7 @@ const server = net.createServer((socket) => {
     socket.id = crypto.randomBytes(16).toString('hex');
     socket.city = null;
     // 'connection' listener
-    console.log('client connected');
+    socket.write('client connected\r\n');
     socket.on('end', () => {
         console.log('client disconnected');
     });

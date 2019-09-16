@@ -1,0 +1,15 @@
+{
+  "name": "Goofer-nodeJs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:pierrealbaret/Goofer-nodeJs.git",
+  "author": "pljarlegan <pl.jarlegan@citae.fr>",
+  "license": "MIT",
+  "scripts": {
+    "client": "node client.js",
+    "server": "node server.js"
+  },
+  "devDependencies": {
+    "eslint": "^6.4.0"
+  }
+}

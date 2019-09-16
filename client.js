@@ -1,12 +1,12 @@
-var net = require('net');
+const net = require('net');
 const rl = require('readline');
 
-var stream = net.createConnection({port: 8000}, () => {
+const stream = net.createConnection({port: 8000}, () => {
     console.log('connected to server!');
 });
 
 stream.on('data', (chunk) => {
-    console.log(`i received ${chunk}`);
+    console.log(`i received\r\n${chunk}`);
 });
 
 stream.on('end', () => {

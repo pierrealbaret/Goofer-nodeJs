@@ -2,7 +2,7 @@ const net = require('net');
 const rl = require('readline');
 let connected = false;
 const commands = [
-  "initialize\r\n",
+    "initialize\r\n",
     "create\r\n",
     "print\r\n"
 ];

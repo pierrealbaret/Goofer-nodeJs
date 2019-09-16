@@ -1,0 +1,21 @@
+{
+  "name": "goofer-nodejs",
+  "version": "1.0.0",
+  "description": "Goofer  Ville de Goofer",
+  "main": "city.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "node server.js",
+    "client": "node client.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pierrealbaret/Goofer-nodeJs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pierrealbaret/Goofer-nodeJs/issues"
+  },
+  "homepage": "https://github.com/pierrealbaret/Goofer-nodeJs#readme"
+}

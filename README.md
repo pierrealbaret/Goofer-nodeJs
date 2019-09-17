@@ -17,3 +17,5 @@ Server TCP socket Repl
 => Goofer => créer avec des ordonnées x, y de manière aléatoire
 
 => populate city => ajout de x Goofer > 10 par défaut
+
+=> Move x, y to x1, y1

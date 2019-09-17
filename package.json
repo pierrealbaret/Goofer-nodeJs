@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/pierrealbaret/Goofer-nodeJs/issues"
   },
-  "homepage": "https://github.com/pierrealbaret/Goofer-nodeJs#readme"
+  "homepage": "https://github.com/pierrealbaret/Goofer-nodeJs#readme",
+  "dependencies": {
+    "colors": "^1.3.3"
+  }
 }

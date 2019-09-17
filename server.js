@@ -1,49 +1,73 @@
-const readline = require("readline");
-const net = require('net');
-const crypto = require('crypto');
+/* eslint-disable no-console */
 
-const City = require('./city');
+const readline = require("readline"),
+    net = require("net"),
+    crypto = require("crypto"),
+    colors = require("colors"), // eslint-disable-line no-unused-vars
+    City = require("./city");
 
 const server = net.createServer((socket) => {
-    socket.id = crypto.randomBytes(16).toString('hex');
+    "use strict";
+    const endOfResponse = () => { socket.write("end\r\n".cyan); };
+
+    socket.id = crypto.randomBytes(16).toString("hex");
     socket.city = null;
     // 'connection' listener
-    console.log('client connected');
-    socket.on('end', () => {
-        console.log('client disconnected');
+    socket.write("client connected\r\n");
+    endOfResponse();
+
+
+    socket.on("end", () => {
+        console.log("client disconnected".red);
     });
-
-    const city = new City(10, 10, socket);
-    console.log('city.map', city.grid);
-
-    socket.write(`hello \r\n`, 'utf-8');
-    socket.write(`${socket.id} \r\n`, 'utf-8');
 
     const rl = readline.createInterface(socket);
 
-    rl.on("line", function(line) {
-        console.log('retrieving a line', line, line === 'initialize ', typeof line);
-        if(line === 'initialize') {
-            console.log('write ID SOCKET');
-            socket.write(`Your socket id is : ${socket.id} \r\n`, 'utf-8');
-        } else if(line === 'populate') {
-            city.populate();
-        } else if(line === 'print') {
-            city.print();
+    rl.on("line", (line) => {
+        console.log("retrieving a line".green, line.red);
+
+        if (line === "initialize") {
+            console.log("initialize connexion".blue);
+            socket.write(`Your socket id is : ${socket.id} \r\n`.green, "utf-8");
+            endOfResponse();
+        } else if (line.includes("create")) {
+            console.log("create city".blue);
+            const params = line.match(/^create ([0-9]+) ([0-9]+)$/);
+            socket.city = new City(socket, parseInt(params[1]), parseInt(params[2]));
+            socket.city.print();
+            endOfResponse();
+        } else if (line === "close") {
+            console.log("close client".blue);
+            endOfResponse();
+            socket.end();
         }
+
+        if (socket.city) {
+            if (line === "populate") {
+                console.log("populate goofers".blue);
+                socket.city.populate(10);
+                endOfResponse();
+            } else if (line === "print") {
+                console.log("print city".blue);
+                socket.city.print();
+                endOfResponse();
+            }
+        }
+
     });
-    rl.on('close', function() {
-        console.log('closing stream');
+    rl.on("close", () => {
+        console.log("closing stream".red);
     });
 
     // socket.end();
 });
 
-server.on('error', (err) => {
+server.on("error", (err) => {
+    "use strict";
     throw err;
 });
 
 server.listen(8000, () => {
-    console.log('server bound');
+    "use strict";
+    console.log("server ready".red);
 });
-

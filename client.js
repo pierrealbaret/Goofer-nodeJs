@@ -1,29 +1,50 @@
-var net = require('net');
-const rl = require('readline');
+/* eslint-disable no-console */
+const net = require("net"),
+    colors = require("colors"), // eslint-disable-line no-unused-vars
+    readline = require("readline"),
 
-let state = {
-  handShake: false,
-  socketIdList: [],
-};
+    client = net.createConnection({ port: 8000 }, () => {
+        "use strict";
+        console.log("connected to server!".red);
+    });
 
-var stream = net.createConnection({port: 8000}, () => {
-    console.log('connected to server!\r\n');
-});
+let isConnected = false,
+    isReadyToSendCommand = false,
+    commands = [
+        "initialize",
+        "create 10 5",
+        "populate",
+        "print",
+        "close",
+    ];
 
-stream.on('data', (chunk) => {
-    const chunkString = chunk.toString();
-    if(/Your socket id is/.test(chunkString)) {
-        const socketId = chunkString.replace(/Your socket id is :/, '');
-        state.handShake = true;
-        state.socketIdList.push(socketId);
-        console.log('state', state);
+client.on("data", (data) => {
+    "use strict";
+
+    console.log(`Data received : \n${data}`);
+
+    if (data.toString().includes("client connected\r\n") && !isConnected) {
+        isConnected = true;
+        console.log("Server ready to handle commands !".green);
     }
-    console.log(`i received ${chunk}\r\n`);
+
+    if (data.toString().includes("end\r\n")) {
+        console.log("readyToSendCommand -> true".gray);
+        isReadyToSendCommand = true;
+    }
+
+    if (isConnected && isReadyToSendCommand) {
+        isReadyToSendCommand = false;
+        const command = commands.shift();
+        if (command) {
+            console.log("Send command", command.blue);
+            client.write(`${command}\r\n`);
+        }
+    }
+
 });
 
-stream.on('end', () => {
-    console.log('fin de la lecture\r\n');
+client.on("end", () => {
+    "use strict";
+    console.log("disconnected from server".red);
 });
-stream.write('initialize\r\n');
-stream.write("populate\r\n");
-stream.write("print\r\n");

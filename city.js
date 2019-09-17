@@ -1,46 +1,44 @@
 module.exports = class City {
-    constructor(width, height, socket) {
+    constructor(socket, width = 10, height = 10) {
         this.width = width;
         this.height = height;
-        this.grid = [];
+        this.grid = this.createGrid(width, height);
         this.socket = socket;
-        this.gooferList = [];
-
-        this.populate(10);
-        this.createGrid();
+        this.goofers = [];
     }
 
-    createGrid() {
-        for(let i = 0; i < this.width; i++) {
-            this.grid.push(Array(this.height).fill('0', 0, this.height));
+    populate(nbGoofers = 10) {
+        this.goofers = [];
+
+        for (let i = 0; i < nbGoofers; i++) {
+            this.goofers.push(this.createRandomGoofer(this.width, this.height));
         }
+        this.socket.write("created goofers :\r\n".green);
+        this.socket.write(`${JSON.stringify(this.goofers)}\r\n`);
     }
 
-    getCase(x, y) {
-        return this.grid[x][y];
+    createRandomGoofer(xMax = 10, yMax = 10) {
+        return { x: this.getRandomInt(xMax), y: this.getRandomInt(yMax) };
     }
 
-    setCase(x, y, value) {
-        this.grid[x][y] = value;
+    getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
     }
 
-    randomIntFromInterval(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
-
-    populate(number = 10) {
-        for(let i= 0; i<number; i ++) {
-            const x = this.randomIntFromInterval(0, this.width);
-            const y = this.randomIntFromInterval(0, this.height);
-            this.gooferList.push({x, y});
+    createGrid(width = 10, height = 10) {
+        let grid = [];
+        for (let i = 0; i < height; i++) {
+            grid.push(Array(width).fill(" ", 0, width));
         }
+        return grid;
     }
 
     print() {
-        this.socket.write('My Map is : \r\n');
-        this.grid.map((row) => {
-           this.socket.write(`${row.join('|')}\r\n`);
+        this.socket.write("Current Map is : \r\n".green);
+        this.socket.write(` |${Array.from(Array(this.width).keys()).join("|")}|\r\n`.underline);
+        this.grid.map((row, index) => {
+            this.goofers.filter((g) => g.y === index).map((g) => row[ g.x ] = "X");
+            this.socket.write(`${index}|${row.join("|")}|\r\n`.underline);
         });
     }
-
 };

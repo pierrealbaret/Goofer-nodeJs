@@ -10,10 +10,13 @@ const net = require("net"),
 
 let isConnected = false,
     isReadyToSendCommand = false,
+    goofers = [],
     commands = [
         "initialize",
-        "create 10 5",
+        "create 10 10",
         "populate",
+        "print",
+        "move",
         "print",
         "close",
     ];
@@ -33,12 +36,22 @@ client.on("data", (data) => {
         isReadyToSendCommand = true;
     }
 
+    if (data.toString().includes("created goofers : ")) {
+        const gfs = data.toString().match(/^created goofers : ([\[\],"a-z0-9:{}]*)/);
+        goofers = JSON.parse(gfs[1]); // save goofers
+    }
+
     if (isConnected && isReadyToSendCommand) {
         isReadyToSendCommand = false;
         const command = commands.shift();
         if (command) {
             console.log("Send command", command.blue);
-            client.write(`${command}\r\n`);
+            if (command === "move") {
+                let cmd = `move ${goofers[ 0 ].x} ${goofers[ 0 ].y} ${goofers[ 0 ].x+1} ${goofers[ 0 ].y+1}`;
+                client.write(`${cmd}\r\n`);
+            } else {
+                client.write(`${command}\r\n`);
+            }
         }
     }
 

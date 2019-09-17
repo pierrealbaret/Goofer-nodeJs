@@ -7,10 +7,11 @@ module.exports = class City {
     this.goofers = [];
   }
 
-  populate(nbGoofers = 10, xMax = 10, yMax = 10) {
+  populate(nbGoofers = 10) {
     this.goofers = [];
+
     for (let i = 0; i < nbGoofers; i++) {
-      this.goofers.push(this.createRandomGoofer(xMax, yMax));
+      this.goofers.push(this.createRandomGoofer(this.width, this.height));
     }
     this.socket.write("created goofers :\r\n".green);
     this.socket.write(`${JSON.stringify(this.goofers)}\r\n`);

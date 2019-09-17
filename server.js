@@ -45,7 +45,7 @@ const server = net.createServer((socket) => {
     if (socket.city) {
       if (line === "populate") {
         console.log("populate goofers".blue);
-        socket.city.populate(socket.city.getRandomInt(10), socket.city.width, socket.city.height);
+        socket.city.populate(10);
         endOfResponse();
       } else if (line === "print") {
         console.log("print city".blue);

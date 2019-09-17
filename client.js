@@ -6,11 +6,19 @@ const net = require("net"),
   client = net.createConnection({ port: 8000 }, () => {
     "use strict";
     console.log("connected to server!".red);
-  });
+  }),
+  displayGrid = (grid) => {
+    "use strict";
+    console.log(` |${Array.from(Array(grid[ 0 ].length).keys()).join("|")}|`.underline);
+    grid.forEach((row, index) => {
+      console.log(`${index}|${row.join("|")}|`.underline);
+    });
+  };
 
 let isConnected = false,
   isReadyToSendCommand = false,
   goofers = [],
+  grid = [],
   commands = [
     "initialize",
     "create 10 10",
@@ -37,9 +45,14 @@ client.on("data", (data) => {
   }
 
   if (data.toString().includes("created goofers : ")) {
-    const gfs = data.toString().match(/^created goofers : ([\[\],"a-z0-9:{}]*)/);
-    goofers = JSON.parse(gfs[1]); // save goofers
+    goofers = JSON.parse(data.toString().match(/^created goofers : ([\[\],"a-z0-9:{}]*)/)[1]); // save goofers
   }
+
+  // if (data.toString().includes("Current Map is : ")) {
+  //   // console.log(data.toString().match(/^Current Map is : ([\[\], GR#"a-z0-9:{}]*)/));
+  //   grid = JSON.parse(data.toString().match(/^Current Map is : ([\[\], GR#"a-z0-9:{}]*)/)[1]); // save grid
+  //   displayGrid(grid);
+  // }
 
   if (isConnected && isReadyToSendCommand) {
     isReadyToSendCommand = false;

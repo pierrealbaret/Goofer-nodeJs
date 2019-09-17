@@ -44,7 +44,7 @@ module.exports = class City {
     this.socket.write("Current Map is : \r\n".green);
     this.socket.write(` |${Array.from(Array(this.width).keys()).join("|")}|\r\n`.underline);
     this.grid.map((row, index) => {
-      this.goofers.filter((g) => g.y === index).map((g) => row[g.x] = "x");
+      this.goofers.filter((g) => g.y === index).map((g) => row[ g.x ] = "x");
       this.socket.write(`${index}|${row.join("|")}|\r\n`.underline);
     });
   }

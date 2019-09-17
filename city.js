@@ -5,11 +5,24 @@ module.exports = class City {
         this.grid = [];
         this.socket = socket;
         this.createGrid();
+        this.goofers = [];
+    }
+    populate(nbGoofers =10, xMax=10, yMax=10) {
+        for(let i=0;i<nbGoofers; i++){
+            this.goofers.concat(this.createRandomGoofer(xMax, yMax));
+        }
     }
 
+    createRandomGoofer(xMax=10, yMax=10) {
+        return {x:this.getRandomInt(xMax), y:this.getRandomInt(yMax)};
+    }
+
+    getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+    }
     createGrid() {
         for(let i = 0; i < this.width; i++) {
-            this.grid.push(Array(this.height).fill('0', 0, this.height));
+            this.grid.push(Array(this.height).fill('_', 0, this.height));
         }
     }
 

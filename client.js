@@ -1,12 +1,16 @@
 const net = require('net');
 const rl = require('readline');
 let connected = false;
+
 const commands = [
     "initialize\r\n",
     "create\r\n",
+
+    "populate\r\n",
     "print\r\n"
+
 ];
-const stream = net.createConnection({port: 8000}, () => {
+const stream = net.createConnection({ port: 8000 }, () => {
     console.log('connected to server!');
 });
 

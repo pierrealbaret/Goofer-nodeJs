@@ -2,6 +2,10 @@ const readline = require("readline");
 const net = require('net');
 const crypto = require('crypto');
 
+
+
+
+
 const City = require('./city');
 
 const server = net.createServer((socket) => {
@@ -28,6 +32,8 @@ const server = net.createServer((socket) => {
             socket.write(`Your socket id is : ${socket.id} \r\n`, 'utf-8');
         } else if(line === 'create') {
             city.print();
+        } else if(line === 'populate') {
+            city.populate();
         } else if(line === 'print') {
             city.print();
         }

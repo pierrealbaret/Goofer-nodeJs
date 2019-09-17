@@ -42,15 +42,26 @@ const server = net.createServer((socket) => {
       socket.end();
     }
 
+
     if (socket.city) {
+      console.log(line.toString());
       if (line === "populate") {
         console.log("populate goofers".blue);
-        socket.city.populate(10);
+        socket.city.populate(2);
         endOfResponse();
       } else if (line === "print") {
         console.log("print city".blue);
         socket.city.print();
         endOfResponse();
+      } else if (line.includes("move")) {
+        const params = line.match(/^move ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)/);
+
+        socket.city.move(
+          { x: parseInt(params[ 1 ]), y: parseInt(params[ 2 ]) },
+        { x: parseInt(params[ 3 ]), y: parseInt(params[ 4 ]) }
+            );
+        endOfResponse();
+
       }
     }
 

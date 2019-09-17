@@ -12,7 +12,7 @@ let isConnected = false,
   isReadyToSendCommand = false,
   commands = [
     "initialize",
-    "create",
+    "create 10 10",
     "populate",
     "print",
     "close",

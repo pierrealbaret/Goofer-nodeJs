@@ -26,8 +26,8 @@ module.exports = class City {
 
   createGrid(width = 10, height = 10) {
     let grid = [];
-    for (let i = 0; i < width; i++) {
-      grid.push(Array(height).fill(" ", 0, height));
+    for (let i = 0; i < height; i++) {
+      grid.push(Array(width).fill(" ", 0, width));
     }
     return grid;
   }
@@ -44,7 +44,7 @@ module.exports = class City {
     this.socket.write("Current Map is : \r\n".green);
     this.socket.write(` |${Array.from(Array(this.width).keys()).join("|")}|\r\n`.underline);
     this.grid.map((row, index) => {
-      this.goofers.filter((g) => g.y === index).map((g) => row[ g.x ] = "x");
+      this.goofers.filter((g) => g.y === index).map((g) => row[ g.x ] = "😆");
       this.socket.write(`${index}|${row.join("|")}|\r\n`.underline);
     });
   }

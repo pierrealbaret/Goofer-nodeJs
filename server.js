@@ -30,10 +30,10 @@ const server = net.createServer((socket) => {
       console.log("initialize connexion".blue);
       socket.write(`Your socket id is : ${socket.id} \r\n`.green, "utf-8");
       endOfResponse();
-    } else if (line === "create") {
+    } else if (line.includes("create")) {
       console.log("create city".blue);
-      socket.city = new City(socket, 10, 10);
-      console.log("city.map", socket.city.grid);
+      const params = line.match(/^create ([0-9]+) ([0-9]+)$/);
+      socket.city = new City(socket, parseInt(params[1]), parseInt(params[2]));
       socket.city.print();
       endOfResponse();
     } else if (line === "close") {

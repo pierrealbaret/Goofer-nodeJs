@@ -25,7 +25,6 @@ client.on("data", (data) => {
 
   if (data.toString().includes("client connected\r\n") && !isConnected) {
     isConnected = true;
-    isReadyToSendCommand = true;
     console.log("Server ready to handle commands !".green);
   }
 
@@ -33,6 +32,7 @@ client.on("data", (data) => {
     console.log("readyToSendCommand -> true".gray);
     isReadyToSendCommand = true;
   }
+
   if (isConnected && isReadyToSendCommand) {
     isReadyToSendCommand = false;
     const command = commands.shift();

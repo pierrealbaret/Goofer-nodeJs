@@ -1,5 +1,6 @@
-const net = require("net"),
-  rl = require("readline");
+/* eslint-disable no-console */
+const net = require("net");
+// rl = require("readline");
 let connected = false;
 
 const commands = [
@@ -11,10 +12,12 @@ const commands = [
 
   ],
   stream = net.createConnection({ port: 8000 }, () => {
+    "use strict";
     console.log("connected to server!");
   });
 
 stream.on("data", (chunk) => {
+  "use strict";
   console.log(`i received\r\n${chunk}`);
   if (chunk.toString() === "client connected\r\n" && !connected) {
     connected = true;
@@ -29,6 +32,7 @@ stream.on("data", (chunk) => {
 });
 
 stream.on("end", () => {
+  "use strict";
   console.log("fin de la lecture");
 });
 

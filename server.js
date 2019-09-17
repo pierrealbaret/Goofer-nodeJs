@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 const readline = require("readline"),
   net = require("net"),
   crypto = require("crypto"),
@@ -5,6 +7,7 @@ const readline = require("readline"),
   City = require("./city");
 
 const server = net.createServer((socket) => {
+  "use strict";
   socket.id = crypto.randomBytes(16).toString("hex");
   socket.city = null;
   // 'connection' listener
@@ -42,10 +45,12 @@ const server = net.createServer((socket) => {
 });
 
 server.on("error", (err) => {
+  "use strict";
   throw err;
 });
 
 server.listen(8000, () => {
+  "use strict";
   console.log("server bound");
 });
 

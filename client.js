@@ -25,7 +25,6 @@ let isConnected = false,
     "populate",
     "print",
     "move",
-    "print",
     "close",
   ];
 
@@ -48,11 +47,6 @@ client.on("data", (data) => {
     goofers = JSON.parse(data.toString().match(/^created goofers : ([\[\],"a-z0-9:{}]*)/)[1]); // save goofers
   }
 
-  // if (data.toString().includes("Current Map is : ")) {
-  //   // console.log(data.toString().match(/^Current Map is : ([\[\], GR#"a-z0-9:{}]*)/));
-  //   grid = JSON.parse(data.toString().match(/^Current Map is : ([\[\], GR#"a-z0-9:{}]*)/)[1]); // save grid
-  //   displayGrid(grid);
-  // }
 
   if (isConnected && isReadyToSendCommand) {
     isReadyToSendCommand = false;

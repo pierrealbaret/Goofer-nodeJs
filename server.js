@@ -46,7 +46,7 @@ const server = net.createServer((socket) => {
       console.log(line.toString());
       if (line === "populate") {
         console.log("populate goofers".blue);
-        socket.city.populate(2);
+        socket.city.populate(3);
         endOfResponse();
       } else if (line === "print") {
         console.log("print city".blue);

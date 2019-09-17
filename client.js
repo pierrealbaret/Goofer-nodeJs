@@ -8,8 +8,8 @@ const net = require("net"),
     console.log("connected to server!".red);
   });
 
-let connected = false,
-  readyToSendCommand = false,
+let isConnected = false,
+  isReadyToSendCommand = false,
   commands = [
     "initialize",
     "create",
@@ -23,18 +23,18 @@ client.on("data", (data) => {
 
   console.log(`Data received : \n${data}`);
 
-  if (data.toString().includes("client connected\r\n") && !connected) {
-    connected = true;
-    readyToSendCommand = true;
+  if (data.toString().includes("client connected\r\n") && !isConnected) {
+    isConnected = true;
+    isReadyToSendCommand = true;
     console.log("Server ready to handle commands !".green);
   }
 
   if (data.toString().includes("end\r\n")) {
     console.log("readyToSendCommand -> true".gray);
-    readyToSendCommand = true;
+    isReadyToSendCommand = true;
   }
-  if (connected && readyToSendCommand) {
-    readyToSendCommand = false;
+  if (isConnected && isReadyToSendCommand) {
+    isReadyToSendCommand = false;
     const command = commands.shift();
     if (command) {
       console.log("Send command", command.blue);

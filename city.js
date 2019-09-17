@@ -1,16 +1,19 @@
 module.exports = class City {
-  constructor(width, height, socket) {
+  constructor(socket, width = 10, height = 10) {
     this.width = width;
     this.height = height;
-    this.grid = [];
+    this.grid = this.createGrid(width, height);
     this.socket = socket;
-    this.createGrid();
     this.goofers = [];
   }
+
   populate(nbGoofers = 10, xMax = 10, yMax = 10) {
-    for (let i = 0;i < nbGoofers; i++) {
-      this.goofers.concat(this.createRandomGoofer(xMax, yMax));
+    this.goofers = [];
+    for (let i = 0; i < nbGoofers; i++) {
+      this.goofers.push(this.createRandomGoofer(xMax, yMax));
     }
+    this.socket.write("created goofers :\r\n".green);
+    this.socket.write(`${JSON.stringify(this.goofers)}\r\n`);
   }
 
   createRandomGoofer(xMax = 10, yMax = 10) {
@@ -20,10 +23,13 @@ module.exports = class City {
   getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
   }
-  createGrid() {
-    for (let i = 0; i < this.width; i++) {
-      this.grid.push(Array(this.height).fill("_", 0, this.height));
+
+  createGrid(width = 10, height = 10) {
+    let grid = [];
+    for (let i = 0; i < width; i++) {
+      grid.push(Array(height).fill("_", 0, height));
     }
+    return grid;
   }
 
   getCase(x, y) {
@@ -35,7 +41,7 @@ module.exports = class City {
   }
 
   print() {
-    this.socket.write("My Map is : \r\n");
+    this.socket.write("Current Map is : \r\n".green);
     this.grid.map((row) => {
       this.socket.write(`${row.join("|")}\r\n`);
     });

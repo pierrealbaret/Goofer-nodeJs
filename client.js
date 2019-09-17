@@ -1,19 +1,21 @@
 /* eslint-disable no-console */
-const net = require("net");
+const net = require("net"),
+  colors = require("colors"); // eslint-disable-line no-unused-vars
+
 // rl = require("readline");
 let connected = false;
 
-const commands = [
-    "initialize\r\n",
-    "create\r\n",
-
-    "populate\r\n",
-    "print\r\n",
-
+let commands = [
+    "initialize",
+    "create",
+    "populate",
+    "print",
+    "close",
   ],
+
   stream = net.createConnection({ port: 8000 }, () => {
     "use strict";
-    console.log("connected to server!");
+    console.log("connected to server!".red);
   });
 
 stream.on("data", (chunk) => {
@@ -22,17 +24,18 @@ stream.on("data", (chunk) => {
   if (chunk.toString() === "client connected\r\n" && !connected) {
     connected = true;
   }
+
   if (connected) {
-    commands.map((command) => {
-      console.log(command);
-      stream.write(command);
-      commands.shift();
-    });
+    const command = commands.shift();
+    if (command) {
+      console.log(`Send command ${command}`.blue);
+      stream.write(`${command}\r\n`);
+    }
   }
 });
 
 stream.on("end", () => {
   "use strict";
-  console.log("fin de la lecture");
+  console.log("fin de la lecture".red);
 });
 

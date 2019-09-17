@@ -7,9 +7,13 @@
   "license": "MIT",
   "scripts": {
     "client": "node client.js",
-    "server": "node server.js"
+    "server": "nodemon server.js"
   },
   "devDependencies": {
-    "eslint": "^6.4.0"
+    "eslint": "^6.4.0",
+    "nodemon": "^1.19.2"
+  },
+  "dependencies": {
+    "colors": "^1.3.3"
   }
 }

@@ -124,7 +124,7 @@ module.exports = class City {
     }
 
     if (this.rocks.filter((r) => r.x === x && r.y === y).length) {
-      return "R".gray.bold;
+      return "R".cyan.bold;
     }
     if (this.goofers.filter((g) => g.x === x && g.y === y).length) {
       return "G".red.bold;

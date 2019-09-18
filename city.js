@@ -6,7 +6,7 @@ module.exports = class City {
     this.socket = socket;
     this.goofers = [];
     this.rocks = this.addRock();
-    this.fov = 2;
+    this.fov = 3;
   }
 
   populate(nbGoofers = 10) {
@@ -21,9 +21,9 @@ module.exports = class City {
 
   isOccuped(item) {
     if (this.rocks) {
-      return this.goofers.find((g) => g.x === item.x && g.y === item.x) || this.rocks.find((r) => r.x === item.x && r.y === item.x);
+      return this.goofers.find((g) => g.x === item.x && g.y === item.y) || this.rocks.find((r) => r.x === item.x && r.y === item.y);
     }
-    return this.goofers.find((g) => g.x === item.x && g.y === item.x);
+    return this.goofers.find((g) => g.x === item.x && g.y === item.y);
   }
 
   createRandomItem() {
@@ -84,7 +84,7 @@ module.exports = class City {
     }
 
     if (this.isOccuped(newPos)) {
-      this.socket.write("invalid move !!! \r\n");
+      this.socket.write(`invalid move !!! ${JSON.stringify(oldPos)} -> ${JSON.stringify(newPos)}\r\n`.red);
       return oldPos;
     }
     return newPos;

@@ -21,7 +21,7 @@ let isConnected = false,
   grid = [],
   commands = [
     "initialize",
-    "create 10 10",
+    "create 20 10",
     "populate",
     "print",
     "move",
@@ -31,7 +31,7 @@ let isConnected = false,
 client.on("data", (data) => {
   "use strict";
 
-  console.log(`Data received : \n${data}`);
+  console.log(data.toString());
 
   if (data.toString().includes("client connected\r\n") && !isConnected) {
     isConnected = true;

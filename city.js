@@ -120,30 +120,30 @@ module.exports = class City {
 
   getVisibleItems(x, y, cel) {
     if (!this.isCelluleInRange(x, y)) {
-      return " ";
+      return "░";
     }
 
     if (this.rocks.filter((r) => r.x === x && r.y === y).length) {
-      return "R".cyan;
+      return "R".gray.bold;
     }
     if (this.goofers.filter((g) => g.x === x && g.y === y).length) {
-      return "G".red;
+      return "G".red.bold;
     }
 
-    return "#".green;
+    return "•".green.bold;
   }
 
   print() {
     console.log("Current Server Map is : ".cyan);
     console.log(` |${Array.from(Array(this.width).keys()).join("|")}|`.underline);
     this.grid.forEach((row, y) => {
-      const newRow = [].concat(row);
-      this.goofers.filter((g) => g.y === y).map((g) => newRow[ g.x ] = "G".red);
-      this.rocks.filter((r) => r.y === y).map((g) => newRow[ g.x ] = "R".cyan);
+      const newRow = [].concat(row).fill("░");
+      this.goofers.filter((g) => g.y === y).map((g) => newRow[ g.x ] = "G".red.bold);
+      this.rocks.filter((r) => r.y === y).map((g) => newRow[ g.x ] = "R".cyan.bold);
       console.log(`${y}|${newRow.join("|")}|`.underline);
     });
 
-    this.socket.write("Current Map is : \r\n".green);
+    this.socket.write("Current Map is : \n".green);
     this.socket.write(` |${Array.from(Array(this.width).keys()).join("|")}|\r\n`.underline);
 
     this.grid.forEach((row, y) => {

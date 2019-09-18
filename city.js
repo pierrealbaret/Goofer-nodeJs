@@ -6,7 +6,7 @@ module.exports = class City {
     this.socket = socket;
     this.goofers = [];
     this.rocks = this.addRock();
-    this.fov = 1;
+    this.fov = 2;
   }
 
   populate(nbGoofers = 10) {
@@ -124,13 +124,13 @@ module.exports = class City {
     }
 
     if (this.rocks.filter((r) => r.x === x && r.y === y).length) {
-      return "R";
+      return "R".cyan;
     }
     if (this.goofers.filter((g) => g.x === x && g.y === y).length) {
-      return "G";
+      return "G".red;
     }
 
-    return "#";
+    return "#".green;
   }
 
   print() {
@@ -138,8 +138,8 @@ module.exports = class City {
     console.log(` |${Array.from(Array(this.width).keys()).join("|")}|`.underline);
     this.grid.forEach((row, y) => {
       const newRow = [].concat(row);
-      this.goofers.filter((g) => g.y === y).map((g) => newRow[ g.x ] = "G");
-      this.rocks.filter((r) => r.y === y).map((g) => newRow[ g.x ] = "R");
+      this.goofers.filter((g) => g.y === y).map((g) => newRow[ g.x ] = "G".red);
+      this.rocks.filter((r) => r.y === y).map((g) => newRow[ g.x ] = "R".cyan);
       console.log(`${y}|${newRow.join("|")}|`.underline);
     });
 
@@ -152,7 +152,6 @@ module.exports = class City {
       this.socket.write(`${y}|${newRow.join("|")}|\r\n`.underline);
     });
     this.socket.write("end\r\n".cyan);
-    console.log(this.goofers);
   }
 
 };

@@ -134,6 +134,15 @@ module.exports = class City {
   }
 
   print() {
+    console.log("Current Server Map is : ".cyan);
+    console.log(` |${Array.from(Array(this.width).keys()).join("|")}|`.underline);
+    this.grid.forEach((row, y) => {
+      const newRow = [].concat(row);
+      this.goofers.filter((g) => g.y === y).map((g) => newRow[ g.x ] = "G");
+      this.rocks.filter((r) => r.y === y).map((g) => newRow[ g.x ] = "R");
+      console.log(`${y}|${newRow.join("|")}|`.underline);
+    });
+
     this.socket.write("Current Map is : \r\n".green);
     this.socket.write(` |${Array.from(Array(this.width).keys()).join("|")}|\r\n`.underline);
 

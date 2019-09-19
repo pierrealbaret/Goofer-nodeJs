@@ -16,7 +16,7 @@ module.exports = class City {
       this.goofers.push(this.createRandomItem());
     }
 
-    this.socket.write(`created goofers : ${JSON.stringify(this.goofers)}\r\n`);
+    this.socket.write(`created goofers : ${ JSON.stringify(this.goofers) }\r\n`);
   }
 
   isOccuped(item) {

@@ -147,7 +147,7 @@ module.exports = class City {
         // remove First & Last element (cell & gopher)
         cells.pop();
         cells.shift();
-        // this.printWithRay(cells); // DEBUG
+        // this.print(cells); // DEBUG
         const cellContainingRock = cells.map((c) => {
 
           if (this.rocks.find((r) => r.x === c.x && r.y === c.y)) {
@@ -186,28 +186,17 @@ module.exports = class City {
     return "•".green.bold;
   }
 
-  printWithRay(cells) {
+
+  print(cells = null) {
     console.log("Current Server Map is : ".cyan);
     console.log(` |${Array.from(Array(this.width).keys()).map((i)=> i.toString().slice(-1)).join("|")}| x`.underline);
     this.grid.forEach((row, y) => {
       const newRow = [].concat(row).fill("░");
       this.gophers.filter((g) => g.y === y).map((g) => newRow[ g.x ] = "G".red.bold);
       this.rocks.filter((r) => r.y === y).map((r) => newRow[ r.x ] = "R".cyan.bold);
-      cells.filter((c) => c.y === y).map((c) => newRow[ c.x ] = newRow[ c.x ].bgGreen);
-      const rrr = newRow.map((c, x) => { return this.isCellInRange(x, y) ? c : c.gray });
-
-      console.log(`${y.toString().slice((-1))}|${rrr.join("|")}|`.underline);
-    });
-    console.log("y");
-  }
-
-  print() {
-    console.log("Current Server Map is : ".cyan);
-    console.log(` |${Array.from(Array(this.width).keys()).map((i)=> i.toString().slice(-1)).join("|")}| x`.underline);
-    this.grid.forEach((row, y) => {
-      const newRow = [].concat(row).fill("░");
-      this.gophers.filter((g) => g.y === y).map((g) => newRow[ g.x ] = "G".red.bold);
-      this.rocks.filter((r) => r.y === y).map((r) => newRow[ r.x ] = "R".cyan.bold);
+      if (cells) { // display green ray
+        cells.filter((c) => c.y === y).map((c) => newRow[ c.x ] = newRow[ c.x ].bgGreen);
+      }
       const rrr = newRow.map((c, x) => { return this.isCellInRange(x, y) ? c : c.gray});
       console.log(`${y.toString().slice((-1))}|${rrr.join("|")}|`.underline);
     });

@@ -19,7 +19,7 @@ module.exports = class City {
     this.socket.write(`created goofers : ${JSON.stringify(this.goofers)}\r\n`);
   }
 
-  isOccuped(item) {
+  isOccupied(item) {
     if (this.rocks) {
       return this.goofers.find((g) => g.x === item.x && g.y === item.y) || this.rocks.find((r) => r.x === item.x && r.y === item.y);
     }
@@ -28,7 +28,7 @@ module.exports = class City {
 
   createRandomItem() {
     const item = { x: this.getRandomInt(this.width), y: this.getRandomInt(this.height) };
-    if (! this.isOccuped(item)) {
+    if (! this.isOccupied(item)) {
       return item;
     }
     return this.createRandomItem();
@@ -83,7 +83,7 @@ module.exports = class City {
       newPos.y = this.height - 1;
     }
 
-    if (this.isOccuped(newPos)) {
+    if (this.isOccupied(newPos)) {
       this.socket.write(`invalid move !!! ${JSON.stringify(oldPos)} -> ${JSON.stringify(newPos)}\r\n`.red);
       return oldPos;
     }

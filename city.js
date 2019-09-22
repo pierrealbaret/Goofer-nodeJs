@@ -106,16 +106,6 @@ module.exports = class City {
     this.print();
   }
 
-  availableGrid() {
-    let grid = [];
-    for (let i = 0; i < this.height; i++) {
-      grid.push(Array(this.width).fill(" ", 0, this.width));
-    }
-
-
-    return this.grid;
-  }
-
   getGopherInRange(x, y) {
     return this.gophers.filter((g) =>
       (g.x >= x - this.fov && g.x <= x + this.fov) &&
@@ -130,9 +120,7 @@ module.exports = class City {
   getCellsBetween(a, b) {
     // const delta = (b.y-a.y)/(b.x-a.x);
     const pts = bresenham([ a.x, a.y ],[ b.x, b.y ]);
-    const cells = pts.map((pt) => ({ x: pt[ 0 ], y: pt[ 1 ]}));
-    // console.log("a".red, a, "b".red, b, "->", cells);
-    return cells;
+    return pts.map((pt) => ({ x: pt[ 0 ], y: pt[ 1 ]}));
   }
 
   isCellVisible(x, y) {
@@ -169,7 +157,7 @@ module.exports = class City {
     return false;
   }
 
-  getVisibleItems(x, y, cel) {
+  getVisibleItems(x, y) {
     if (!this.isCellInRange(x, y)) {
       return "░";
     }

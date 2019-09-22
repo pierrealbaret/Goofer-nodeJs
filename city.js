@@ -6,7 +6,7 @@ module.exports = class City {
     this.socket = socket;
     this.goofers = [];
     this.rocks = this.addRock();
-    this.fov = 3;
+    this.fov = 2;
   }
 
   populate(nbGoofers = 10) {
@@ -111,18 +111,42 @@ module.exports = class City {
     return this.grid;
   }
 
-  isCelluleInRange(x, y) {
+  getGooferInRange(x, y) {
     return this.goofers.filter((g) =>
       (g.x >= x - this.fov && g.x <= x + this.fov) &&
       (g.y >= y - this.fov && g.y <= y + this.fov)
-    ).length;
+    )
+  }
+
+  isCelluleInRange(x, y) {
+    return this.getGooferInRange(x,y).length;
+  }
+
+  isCelluleVisible(x, y) {
+    const goofersInRange = this.getGooferInRange(x,y);
+    try {
+      goofersInRange.map((g) => {
+        if (x === g.x && y === g.y) { // cellule = goofer > on stop !
+          throw "visible";
+        }
+        const delta = (y-g.y)/(x-g.x);
+        console.log("g".red, g.x, g.y, "cel".red, x, y, "soit : y=", delta);
+      });
+    } catch (msg) {
+      if (msg === "visible") {
+        return true;
+      }
+    }
+    return false;
   }
 
   getVisibleItems(x, y, cel) {
     if (!this.isCelluleInRange(x, y)) {
       return "░";
     }
-
+    if (!this.isCelluleVisible(x, y)) {
+      return "░";
+    }
     if (this.rocks.filter((r) => r.x === x && r.y === y).length) {
       return "R".cyan.bold;
     }
@@ -140,7 +164,8 @@ module.exports = class City {
       const newRow = [].concat(row).fill("░");
       this.goofers.filter((g) => g.y === y).map((g) => newRow[ g.x ] = "G".red.bold);
       this.rocks.filter((r) => r.y === y).map((g) => newRow[ g.x ] = "R".cyan.bold);
-      console.log(`${y}|${newRow.join("|")}|`.underline);
+      const rrr = newRow.map((c, x) => { return this.isCelluleInRange(x, y) ? c : c.gray});
+      console.log(`${y}|${rrr.join("|")}|`.underline);
     });
 
     this.socket.write("Current Map is : \n".green);

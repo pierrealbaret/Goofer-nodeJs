@@ -52,7 +52,7 @@ client.on("data", (data) => {
     isReadyToSendCommand = false;
     const command = commands.shift();
     if (command) {
-      console.log("Send command", command.blue);
+      console.log("Send command", `'${command}'`.blue);
       if (command === "move") {
         let cmd = `move ${goofers[ 0 ].x} ${goofers[ 0 ].y} ${goofers[ 0 ].x+1} ${goofers[ 0 ].y+1}`;
         client.write(`${cmd}\r\n`);

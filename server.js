@@ -24,7 +24,7 @@ const server = net.createServer((socket) => {
   const rl = readline.createInterface(socket);
 
   rl.on("line", (line) => {
-    console.log("retrieving a line".green, line.red);
+    console.log("retrieving a line".green, `'${line}'`.red);
 
     if (line === "initialize") {
       console.log("initialize connexion".blue);
@@ -45,9 +45,9 @@ const server = net.createServer((socket) => {
     if (socket.city) {
       console.log(line.toString());
       if (line.includes("populate")) {
-        console.log("populate goofers".blue);
-        const [ _, nbGoofers ] = line.match(/^populate ([0-9]+)$/);
-        socket.city.populate(parseInt(nbGoofers));
+        console.log("populate gophers".blue);
+        const [ _, nbGophers ] = line.match(/^populate ([0-9]+)$/);
+        socket.city.populate(parseInt(nbGophers));
         endOfResponse();
       } else if (line === "print") {
         console.log("print city".blue);

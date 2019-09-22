@@ -32,8 +32,8 @@ const server = net.createServer((socket) => {
       endOfResponse();
     } else if (line.includes("create")) {
       console.log("create city".blue);
-      const params = line.match(/^create ([0-9]+) ([0-9]+)$/);
-      socket.city = new City(socket, parseInt(params[1]), parseInt(params[2]));
+      const [ _, width, height ] = line.match(/^create ([0-9]+) ([0-9]+)$/);
+      socket.city = new City(socket, parseInt(width), parseInt(height));
       socket.city.print();
     } else if (line === "close") {
       console.log("close client".blue);
@@ -44,9 +44,10 @@ const server = net.createServer((socket) => {
 
     if (socket.city) {
       console.log(line.toString());
-      if (line === "populate") {
+      if (line.includes("populate")) {
         console.log("populate goofers".blue);
-        socket.city.populate(10);
+        const [ _, nbGoofers ] = line.match(/^populate ([0-9]+)$/);
+        socket.city.populate(parseInt(nbGoofers));
         endOfResponse();
       } else if (line === "print") {
         console.log("print city".blue);

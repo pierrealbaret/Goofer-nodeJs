@@ -188,7 +188,7 @@ module.exports = class City {
 
   printWithRay(cells) {
     console.log("Current Server Map is : ".cyan);
-    console.log(` |${Array.from(Array(this.width).keys()).join("|")}| x`.underline);
+    console.log(` |${Array.from(Array(this.width).keys()).map((i)=> i.toString().slice(-1)).join("|")}| x`.underline);
     this.grid.forEach((row, y) => {
       const newRow = [].concat(row).fill("░");
       this.gophers.filter((g) => g.y === y).map((g) => newRow[ g.x ] = "G".red.bold);
@@ -196,30 +196,31 @@ module.exports = class City {
       cells.filter((c) => c.y === y).map((c) => newRow[ c.x ] = newRow[ c.x ].bgGreen);
       const rrr = newRow.map((c, x) => { return this.isCellInRange(x, y) ? c : c.gray });
 
-      console.log(`${y}|${rrr.join("|")}|`.underline);
+      console.log(`${y.toString().slice((-1))}|${rrr.join("|")}|`.underline);
     });
     console.log("y");
   }
 
   print() {
     console.log("Current Server Map is : ".cyan);
-    console.log(` |${Array.from(Array(this.width).keys()).join("|")}| x`.underline);
+    console.log(` |${Array.from(Array(this.width).keys()).map((i)=> i.toString().slice(-1)).join("|")}| x`.underline);
     this.grid.forEach((row, y) => {
       const newRow = [].concat(row).fill("░");
       this.gophers.filter((g) => g.y === y).map((g) => newRow[ g.x ] = "G".red.bold);
       this.rocks.filter((r) => r.y === y).map((r) => newRow[ r.x ] = "R".cyan.bold);
       const rrr = newRow.map((c, x) => { return this.isCellInRange(x, y) ? c : c.gray});
-      console.log(`${y}|${rrr.join("|")}|`.underline);
+      console.log(`${y.toString().slice((-1))}|${rrr.join("|")}|`.underline);
     });
     console.log("y");
 
     this.socket.write("Current Map is : \n".green);
-    this.socket.write(` |${Array.from(Array(this.width).keys()).join("|")}|\r\n`.underline);
+
+    this.socket.write(` |${Array.from(Array(this.width).keys()).map((i)=> i.toString().slice(-1)).join("|")}| x\r\n`.underline);
 
     this.grid.forEach((row, y) => {
       const newRow = [];
       row.forEach((cel, x) => { newRow.push(this.getVisibleItems(x, y))});
-      this.socket.write(`${y}|${newRow.join("|")}|\r\n`.underline);
+      this.socket.write(`${y.toString().slice((-1))}|${newRow.join("|")}|\r\n`.underline);
     });
     this.socket.write("end\r\n".cyan);
   }

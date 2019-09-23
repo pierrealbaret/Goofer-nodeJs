@@ -17,12 +17,12 @@ const net = require("net"),
 
 let isConnected = false,
   isReadyToSendCommand = false,
-  goofers = [],
+  gophers = [],
   grid = [],
   commands = [
     "initialize",
-    "create 20 10",
-    "populate",
+    "create 20 20",
+    "populate 10",
     "print",
     "move",
     "close",
@@ -43,8 +43,8 @@ client.on("data", (data) => {
     isReadyToSendCommand = true;
   }
 
-  if (data.toString().includes("created goofers : ")) {
-    goofers = JSON.parse(data.toString().match(/^created goofers : ([\[\],"a-z0-9:{}]*)/)[1]); // save goofers
+  if (data.toString().includes("created gophers : ")) {
+    gophers = JSON.parse(data.toString().match(/^created gophers : ([\[\],"a-z0-9:{}]*)/)[1]); // save gophers
   }
 
 
@@ -52,9 +52,9 @@ client.on("data", (data) => {
     isReadyToSendCommand = false;
     const command = commands.shift();
     if (command) {
-      console.log("Send command", command.blue);
+      console.log("Send command", `'${command}'`.blue);
       if (command === "move") {
-        let cmd = `move ${goofers[ 0 ].x} ${goofers[ 0 ].y} ${goofers[ 0 ].x+1} ${goofers[ 0 ].y+1}`;
+        let cmd = `move ${gophers[ 0 ].x} ${gophers[ 0 ].y} ${gophers[ 0 ].x+1} ${gophers[ 0 ].y+1}`;
         client.write(`${cmd}\r\n`);
       } else {
         client.write(`${command}\r\n`);

@@ -160,10 +160,10 @@ module.exports = class City {
 
   getVisibleItems(x, y) {
     if (!this.isCellInRange(x, y)) {
-      return "░";
+      return "?".gray;
     }
     if (!this.isCellVisible(x, y)) {
-      return "░";
+      return "?".gray;
     }
     if (this.rocks.filter((r) => r.x === x && r.y === y).length) {
       return "R".cyan.bold;
@@ -172,7 +172,7 @@ module.exports = class City {
       return "G".red.bold;
     }
 
-    return "•".green.bold;
+    return "░";
   }
 
 

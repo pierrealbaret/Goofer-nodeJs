@@ -55,6 +55,7 @@ client.on("data", (data) => {
       console.log("Send command", `'${command}'`.blue);
       if (command === "move") {
         let cmd = `move ${gophers[ 0 ].x} ${gophers[ 0 ].y} ${gophers[ 0 ].x+1} ${gophers[ 0 ].y+1}`;
+        console.log(cmd);
         client.write(`${cmd}\r\n`);
       } else {
         client.write(`${command}\r\n`);

@@ -8,7 +8,9 @@ module.exports = class City {
     this.socket = socket;
     this.gophers = [];
     this.rocks = this.addRock();
-    this.fov = 2;
+    this.fov = 3;
+    this.oldPos = null;
+    this.newPos = null;
   }
 
   populate(nbGophers = 10) {
@@ -98,6 +100,8 @@ module.exports = class City {
 
   move(oldPos, newPos) {
     let newNewPos = this.trueNewPosition(newPos, oldPos);
+    this.oldPos = oldPos; // save
+    this.newPos = newNewPos; // save
     this.gophers.forEach((gopher) => {
       if (gopher.x === oldPos.x && gopher.y === oldPos.y) {
         gopher.x = newNewPos.x;
@@ -198,10 +202,23 @@ module.exports = class City {
     this.grid.forEach((row, y) => {
       const newRow = [];
       row.forEach((cel, x) => { newRow.push(this.getVisibleItems(x, y))});
+
+      // display old / new gooferPos if changed
+      row.forEach((cel, x) => {
+        if (this.oldPos && this.oldPos.x === x && this.oldPos.y === y ) {
+          newRow[x] = newRow[x].bgBlue;
+        }
+        if (this.newPos && this.newPos.x === x && this.newPos.y === y ) {
+          newRow[x] = newRow[x].bgGreen;
+        }
+      });
       this.socket.write(`${y.toString().slice((-1))}|${newRow.join("|")}|\r\n`.underline);
     });
     this.socket.write("y\r\n");
     this.socket.write("end\r\n".cyan);
+
+    this.oldPos = null;
+    this.newPos = null;
   }
 
 };

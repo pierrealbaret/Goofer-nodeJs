@@ -8,7 +8,7 @@ module.exports = class City {
     this.socket = socket;
     this.gophers = [];
     this.rocks = this.addRock();
-    this.fov = 3;
+    this.fov = 2;
   }
 
   populate(nbGophers = 10) {
@@ -200,6 +200,7 @@ module.exports = class City {
       row.forEach((cel, x) => { newRow.push(this.getVisibleItems(x, y))});
       this.socket.write(`${y.toString().slice((-1))}|${newRow.join("|")}|\r\n`.underline);
     });
+    this.socket.write("y\r\n");
     this.socket.write("end\r\n".cyan);
   }
 

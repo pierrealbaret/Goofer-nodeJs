@@ -215,7 +215,7 @@ module.exports = class City {
       this.socket.write(`${y.toString().slice((-1))}|${newRow.join("|")}|\r\n`.underline);
     });
     this.socket.write("y\r\n");
-    this.socket.write("end\r\n".cyan);
+    this.socket.write("\r\n\r\n".cyan);
 
     this.oldPos = null;
     this.newPos = null;

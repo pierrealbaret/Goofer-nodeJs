@@ -38,7 +38,7 @@ client.on("data", (data) => {
     console.log("Server ready to handle commands !".green);
   }
 
-  if (data.toString().includes("end\r\n")) {
+  if (data.toString().includes("\r\n\r\n")) {
     console.log("readyToSendCommand -> true".gray);
     isReadyToSendCommand = true;
   }

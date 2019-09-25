@@ -8,7 +8,7 @@ const readline = require("readline"),
 
 const server = net.createServer((socket) => {
   "use strict";
-  const endOfResponse = () => { socket.write("end\r\n".cyan); };
+  const endOfResponse = () => { socket.write("\r\n\r\n".cyan); };
 
   socket.id = crypto.randomBytes(16).toString("hex");
   socket.city = null;

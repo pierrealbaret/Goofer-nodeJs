@@ -203,7 +203,7 @@ module.exports = class City {
       const newRow = [];
       row.forEach((cel, x) => { newRow.push(this.getVisibleItems(x, y))});
 
-      // display old / new gooferPos if changed
+      // display old / new gopherPos if changed
       row.forEach((cel, x) => {
         if (this.oldPos && this.oldPos.x === x && this.oldPos.y === y ) {
           newRow[x] = newRow[x].bgBlue;

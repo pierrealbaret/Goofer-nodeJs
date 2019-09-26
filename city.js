@@ -207,7 +207,7 @@ module.exports = class City {
   }
 
   getRandomColor() {
-    const availableColors =  ["red", "cyan", "green", "yellow"];
+    const availableColors = ["black", "red", "green", "yellow", "blue", "magenta", "white", "gray" ];
 
     return availableColors[Math.floor(Math.random()*availableColors.length)];
   }

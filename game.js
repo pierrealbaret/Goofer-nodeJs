@@ -1,8 +1,10 @@
 module.exports = class Game {
-  constructor(id, nbPlayers = 1) {
+  constructor(id, nbPlayers = 1, nbTurns = 3, timeout = 1) {
     this.id = id;
     this.city = null;
     this.nbPlayers = nbPlayers;
+    this.nbTurns = nbTurns;
+    this.timeout = timeout * 1000;
     this.commands = [];
   }
 

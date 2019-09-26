@@ -48,9 +48,9 @@ const server = net.createServer((socket) => {
 
     } else if (line.includes("create")) {
       console.log("create game".blue);
-      const [ _, width, height, nbPlayers ] = line.match(/^create ([0-9]+) ([0-9]+) ([0-9]+)$/);
+      const [ _, width, height, nbPlayers, nbTurns, timout ] = line.match(/^create ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)$/);
       socket.gameId = createID();
-      currentGame = new Game(socket.gameId, parseInt(nbPlayers));
+      currentGame = new Game(socket.gameId, parseInt(nbPlayers), parseInt(nbTurns), parseInt(timout));
       games.push(currentGame);
       currentGame.city = new City(parseInt(width), parseInt(height));
       currentGame.city.players = {[socket.id] : new Player(socket)};

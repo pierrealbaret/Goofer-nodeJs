@@ -28,6 +28,14 @@ let isConnected = false,
     "move",
     "move",
     "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
     "close",
   ];
 
@@ -68,7 +76,8 @@ client.on("data", (data) => {
         client.write(`${cmd}\r\n`);
       } else if (command === 'joinOrCreateGame') {
           let commandCreateOrJoin = '';
-          const cmdCreate = "create 20 20 3",
+          // width, height, nbPlayers, nbTurns, timout (seconds)
+          const cmdCreate = "create 20 20 3 3 10",
             cmdJoinGame = "joinGame";
           console.log('games', games);
           if (games.length === 0) {

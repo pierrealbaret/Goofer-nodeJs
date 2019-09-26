@@ -24,6 +24,7 @@ module.exports = class Game {
         this.city.print(player.id);
         return player.write("\r\n\r\n".cyan);
       });
+      this.city.printServer();
     }
   }
 

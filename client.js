@@ -68,7 +68,7 @@ client.on("data", (data) => {
         client.write(`${cmd}\r\n`);
       } else if (command === 'joinOrCreateGame') {
           let commandCreateOrJoin = '';
-          const cmdCreate = "create 20 20 2",
+          const cmdCreate = "create 20 20 3",
             cmdJoinGame = "joinGame";
           console.log('games', games);
           if (games.length === 0) {

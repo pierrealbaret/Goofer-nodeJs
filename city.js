@@ -7,7 +7,7 @@ module.exports = class City {
     this.grid = this.createGrid();
     this.players = {};
     this.rocks = this.addRock();
-    this.fov = 3;
+    this.fov = 2;
     this.oldPos = null;
     this.newPos = null;
   }
@@ -197,9 +197,18 @@ module.exports = class City {
       return "R".cyan.bold;
     }
     if (playerId) {
-      if (this.players[playerId].gophers.filter((g) => g.x === x && g.y === y).length) {
-        return "G"[this.players[playerId].color].bold;
-      }
+      return Object.values(this.players)
+        .map((player) => {
+          if (player.gophers.filter((g) => g.x === x && g.y === y).length) {
+            return "G"[ player.color ].bold;
+          }
+        })
+        .reduce((acc, item) => {
+          if (item) {
+            acc = item;
+          }
+          return acc;
+        }, "░");
     } else {
       if (this.getAllGophers().filter((g) => g.x === x && g.y === y).length) {
         return "G".red.bold;

@@ -1,9 +1,10 @@
 /* eslint-disable no-console */
 // TODO Timeout pour chaque (tour 1 sec par défault)
+// TODO FIX Déplacement hors de la grille ! -> si déplacement invalide = on bouge pas
 // TODO limiter nombre de tour pour la partie (10 par défault)
 // TODO tuer des gophers lors d'un mouvement d'un gopher occupé par un autre gopher
 // TODO Tuer la partie lors de la deco d'un joueur
-// TODO Compter les points par gopher vivant à la fin de la partie
+
 
 const readline = require("readline"),
   net = require("net"),
@@ -62,6 +63,7 @@ const server = net.createServer((socket) => {
       endOfResponse();
       socket.end();
       return;
+
     } else if (line === "listGames") {
       console.log("list Games".blue);
       socket.write(`available games : ${JSON.stringify(games.map((game) => game.id))}`);
@@ -72,7 +74,7 @@ const server = net.createServer((socket) => {
       const [ _, gameId ] = line.match(/^joinGame ([a-z0-9]+)$/);
       socket.gameId = gameId;
       currentGame = games.find((game) => game.id === gameId);
-      currentGame.city.players[socket.id] = new Player(socket);
+      currentGame.city.players[ socket.id ] = new Player(socket);
       return endOfResponse();
 
     }
@@ -94,6 +96,7 @@ const server = net.createServer((socket) => {
       } else if (line.includes("move")) {
         currentGame.addCommand(socket.id, line);
         return; // EOL will be sent when all commands was received !
+
       }
     }
 
@@ -101,6 +104,7 @@ const server = net.createServer((socket) => {
     socket.write("Unknow command".rainbow);
     endOfResponse();
   });
+
   rl.on("close", () => {
     // clean player game
     const currentGame = games.find((game) => game.id === socket.gameId);

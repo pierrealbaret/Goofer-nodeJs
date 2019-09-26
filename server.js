@@ -1,4 +1,9 @@
 /* eslint-disable no-console */
+// TODO Timeout pour chaque (tour 1 sec par défault)
+// TODO limiter nombre de tour pour la partie (10 par défault)
+// TODO tuer des gophers lors d'un mouvement d'un gopher occupé par un autre gopher
+// TODO Tuer la partie lors de la deco d'un joueur
+// TODO Compter les points par gopher vivant à la fin de la partie
 
 const readline = require("readline"),
   net = require("net"),
@@ -12,8 +17,7 @@ const readline = require("readline"),
     return crypto.randomBytes(16).toString("hex");
   };
 
-const games = [],
-  clients = [];
+const games = [];
 
 
 const server = net.createServer((socket) => {

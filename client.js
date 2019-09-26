@@ -21,7 +21,11 @@ let isConnected = false,
   grid = [],
   commands = [
     "initialize",
-    "create 20 20",
+//    "listGames", // -> [] || [idGame1, idGame2] // Available games
+    // si games.lenght === 0
+    "create 20 20 2", // width height nbPlayers
+    // si games.length >= 1
+//    "joinGame", // -> idGame1
     "populate 10",
     "print",
     "move",

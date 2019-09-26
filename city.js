@@ -6,32 +6,41 @@ module.exports = class City {
     this.height = height;
     this.grid = this.createGrid();
     this.socket = socket;
-    this.gophers = [];
+    this.gophers = {};
+    this.players = {};
     this.rocks = this.addRock();
     this.fov = 3;
     this.oldPos = null;
     this.newPos = null;
   }
 
-  populate(nbGophers = 10) {
-    this.gophers = [];
-
+  populate(playerId, nbGophers = 10) {
+    const playersGophers = [];
     for (let i = 0; i < nbGophers; i++) {
-      this.gophers.push(this.createRandomItem());
+      playersGophers.push(this.createRandomItem());
     }
+    this.gophers = { [playerId]: playersGophers };
+    this.players = { [playerId]: { color: this.getRandomColor()} };
+    console.log(this.players);
+    this.socket.write(`created gophers : ${JSON.stringify(this.gophers[playerId])}\r\n`);
+  }
 
-    this.socket.write(`created goofers : ${ JSON.stringify(this.gophers) }\r\n`);
-    // this.gophers = [ { x: 5, y: 5 }, { x: 7, y: 4 } ]; // TODO REMOVE ME :)
-    // this.gophers = [ { x: 5, y: 5 } ]; // TODO REMOVE ME :)
-    // this.rocks   = [ { x: 4, y: 4 }, { x: 5, y: 4 }, { x: 4, y: 5 }, { x: 5, y: 6 } ]; // TODO REMOVE ME :)
-    this.socket.write(`created gophers : ${JSON.stringify(this.gophers)}\r\n`);
+  getAllGophers() {
+    return Object.keys(this.gophers)
+      .map((playerId) => {
+        return this.gophers[playerId]
+      })
+      .reduce((acc, item) => {
+        return acc.concat(item);
+      }, []);
   }
 
   isOccupied(item) {
+    const allGophers = this.getAllGophers();
     if (this.rocks) {
-      return this.gophers.find((g) => g.x === item.x && g.y === item.y) || this.rocks.find((r) => r.x === item.x && r.y === item.y);
+      return allGophers.find((g) => g.x === item.x && g.y === item.y) || this.rocks.find((r) => r.x === item.x && r.y === item.y);
     }
-    return this.gophers.find((g) => g.x === item.x && g.y === item.y);
+    return allGophers.find((g) => g.x === item.x && g.y === item.y);
   }
 
   createRandomItem() {
@@ -98,28 +107,40 @@ module.exports = class City {
     return newPos;
   }
 
-  move(oldPos, newPos) {
+  move(playerId, oldPos, newPos) {
     let newNewPos = this.trueNewPosition(newPos, oldPos);
     this.oldPos = oldPos; // save
     this.newPos = newNewPos; // save
-    this.gophers.forEach((gopher) => {
-      if (gopher.x === oldPos.x && gopher.y === oldPos.y) {
-        gopher.x = newNewPos.x;
-        gopher.y = newNewPos.y;
-      }
-    });
-    this.print();
+    this.gophers[playerId]
+      .forEach((gopher) => {
+        if (gopher.x === oldPos.x && gopher.y === oldPos.y) {
+          gopher.x = newNewPos.x;
+          gopher.y = newNewPos.y;
+        }
+      });
+    this.print(playerId);
   }
 
-  getGopherInRange(x, y) {
-    return this.gophers.filter((g) =>
-      (g.x >= x - this.fov && g.x <= x + this.fov) &&
-      (g.y >= y - this.fov && g.y <= y + this.fov)
-    )
+  getGopherInRange(x, y, playerId = null) {
+    if (playerId && this.gophers[ playerId ]) {
+      return this.gophers[playerId].filter((g) =>
+        (g.x >= x - this.fov && g.x <= x + this.fov) &&
+        (g.y >= y - this.fov && g.y <= y + this.fov)
+      )
+    }
+    return Object.keys(this.gophers)
+      .map((pId) => {
+        return this.gophers[pId].filter((g) =>
+          (g.x >= x - this.fov && g.x <= x + this.fov) &&
+          (g.y >= y - this.fov && g.y <= y + this.fov)
+        )
+      }).reduce((acc, item) => {
+        return acc.concat(item);
+      }, []);
   }
 
-  isCellInRange(x, y) {
-    return this.getGopherInRange(x,y).length;
+  isCellInRange(x, y, playerId = null) {
+    return this.getGopherInRange(x,y, playerId).length;
   }
 
   getCellsBetween(a, b) {
@@ -128,8 +149,8 @@ module.exports = class City {
     return pts.map((pt) => ({ x: pt[ 0 ], y: pt[ 1 ]}));
   }
 
-  isCellVisible(x, y) {
-    const gophersInRange = this.getGopherInRange(x,y);
+  isCellVisible(x, y, playerId = null) {
+    const gophersInRange = this.getGopherInRange(x,y, playerId);
     try {
       const cellVisibleForGophers = gophersInRange.map((g) => {
         if (x === g.x && y === g.y) { // cellule = gopher > on stop !
@@ -162,30 +183,51 @@ module.exports = class City {
     return false;
   }
 
-  getVisibleItems(x, y) {
-    if (!this.isCellInRange(x, y)) {
+  getVisibleItems(x, y, playerId = null) {
+    if (!this.isCellInRange(x, y, playerId)) {
       return "?".gray;
     }
-    if (!this.isCellVisible(x, y)) {
+    if (!this.isCellVisible(x, y, playerId)) {
       return "?".gray;
     }
     if (this.rocks.filter((r) => r.x === x && r.y === y).length) {
       return "R".cyan.bold;
     }
-    if (this.gophers.filter((g) => g.x === x && g.y === y).length) {
-      return "G".red.bold;
+    if (playerId) {
+      if (this.gophers[playerId].filter((g) => g.x === x && g.y === y).length) {
+        return "G"[this.players[playerId].color].bold;
+      }
+    } else {
+      if (this.getAllGophers().filter((g) => g.x === x && g.y === y).length) {
+        return "G".red.bold;
+      }
     }
 
     return "░";
   }
 
+  getRandomColor() {
+    const availableColors =  ["red", "cyan", "green", "yellow"];
 
-  print(cells = null) {
+    return availableColors[Math.floor(Math.random()*availableColors.length)];
+  }
+
+  print(playerId, cells = null) {
+
+    // server view
     console.log("Current Server Map is : ".cyan);
     console.log(` |${Array.from(Array(this.width).keys()).map((i)=> i.toString().slice(-1)).join("|")}| x`.underline);
     this.grid.forEach((row, y) => {
       const newRow = [].concat(row).fill("░");
-      this.gophers.filter((g) => g.y === y).map((g) => newRow[ g.x ] = "G".red.bold);
+
+      Object.keys(this.gophers)
+        .forEach((pId) => {
+          this.gophers[pId]
+            .filter((g) => g.y === y)
+            .forEach((g) => newRow[ g.x ] = "G"[ this.players[ pId ].color ].bold);
+        });
+
+
       this.rocks.filter((r) => r.y === y).map((r) => newRow[ r.x ] = "R".cyan.bold);
       if (cells) { // display green ray
         cells.filter((c) => c.y === y).map((c) => newRow[ c.x ] = newRow[ c.x ].bgGreen);
@@ -195,13 +237,15 @@ module.exports = class City {
     });
     console.log("y");
 
+
+    // client view
     this.socket.write("Current Map is : \n".green);
 
     this.socket.write(` |${Array.from(Array(this.width).keys()).map((i)=> i.toString().slice(-1)).join("|")}| x\r\n`.underline);
 
     this.grid.forEach((row, y) => {
       const newRow = [];
-      row.forEach((cel, x) => { newRow.push(this.getVisibleItems(x, y))});
+      row.forEach((cel, x) => { newRow.push(this.getVisibleItems(x, y, playerId))});
 
       // display old / new gopherPos if changed
       row.forEach((cel, x) => {
@@ -215,6 +259,8 @@ module.exports = class City {
       this.socket.write(`${y.toString().slice((-1))}|${newRow.join("|")}|\r\n`.underline);
     });
     this.socket.write("y\r\n");
+
+
     this.socket.write("\r\n\r\n".cyan);
 
     this.oldPos = null;

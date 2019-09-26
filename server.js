@@ -20,7 +20,6 @@ const server = net.createServer((socket) => {
   const endOfResponse = () => { socket.write("\r\n\r\n".cyan); };
 
   socket.id = createID();
-  socket.city = null;
 
   // 'connection' listener
   socket.write("client connected\r\n");
@@ -36,39 +35,56 @@ const server = net.createServer((socket) => {
   rl.on("line", (line) => {
     console.log("retrieving a line".green, `'${line}'`.red);
 
+    let currentGame = null;
     if (line === "initialize") {
       console.log("initialize connexion".blue);
       socket.write(`Your socket id is : ${socket.id} \r\n`.green, "utf-8");
-      endOfResponse();
+      return endOfResponse();
+
     } else if (line.includes("create")) {
       console.log("create game".blue);
       const [ _, width, height, nbPlayers ] = line.match(/^create ([0-9]+) ([0-9]+) ([0-9]+)$/);
       socket.gameId = createID();
-      const currentGame = new Game(socket.gameId, nbPlayers);
+      currentGame = new Game(socket.gameId, nbPlayers);
       games.push(currentGame);
       currentGame.city = new City(socket, parseInt(width), parseInt(height));
       currentGame.players.push(socket) ;
       currentGame.city.print(socket.id);
-      return;
+      return endOfResponse();
+
     } else if (line === "close") {
       console.log("close client".blue);
       endOfResponse();
       socket.end();
+      return;
+    } else if (line === "listGames") {
+      console.log("list Games".blue);
+      socket.write(`available games : ${JSON.stringify(games.map((game) => game.id))}`);
+      return endOfResponse();
+
+    } else if (line === "joinGame") {
+      console.log("join Game".blue);
+      const [ _, gameId ] = line.match(/^joinGame ([a-z0-9]+)$/);
+      socket.gameId = gameId;
+      currentGame = games.find((game) => game.id === gameId);
+      currentGame.players.push(socket);
+      return endOfResponse();
+
     }
 
-    const currentGame = games.find((game) => game.id === socket.gameId);
+    currentGame = games.find((game) => game.id === socket.gameId);
     if (currentGame) {
       console.log(line.toString());
       if (line.includes("populate")) {
         console.log("populate gophers".blue);
         const [ _, nbGophers ] = line.match(/^populate ([0-9]+)$/);
         currentGame.city.populate(socket.id, parseInt(nbGophers));
-        endOfResponse();
+        return endOfResponse();
 
       } else if (line === "print") {
         console.log("print city".blue);
-
         currentGame.city.print(socket.id);
+        return endOfResponse();
 
       } else if (line.includes("move")) {
         const params = line.match(/^move ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)/);
@@ -78,20 +94,18 @@ const server = net.createServer((socket) => {
           { x: parseInt(params[ 1 ]), y: parseInt(params[ 2 ]) },
         { x: parseInt(params[ 3 ]), y: parseInt(params[ 4 ]) }
             );
-
-
+        return endOfResponse();
       }
-    } else {
-      socket.write("unable to find game");
-      endOfResponse();
     }
 
+
+    socket.write("Unknow command".rainbow);
+    endOfResponse();
   });
   rl.on("close", () => {
     console.log("closing stream".red);
   });
 
-  // socket.end();
 });
 
 server.on("error", (err) => {

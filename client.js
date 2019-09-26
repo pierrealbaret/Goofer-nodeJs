@@ -13,23 +13,27 @@ const net = require("net"),
     grid.forEach((row, index) => {
       console.log(`${index}|${row.join("|")}|`.underline);
     });
+  },
+  joinOrCreateGame = () => {
+    const cmdCreate = "create 20 20 2",
+      cmdJoinGame = "joinGame";
+    if (games.length === 0) {
+      return cmdCreate;
+    }
+    return `${cmdJoinGame} ${games[0]}`;
   };
 
 let isConnected = false,
   isReadyToSendCommand = false,
   gophers = [],
   grid = [],
+  games = [],
   commands = [
     "initialize",
-//    "listGames", // -> [] || [idGame1, idGame2] // Available games
-    // si games.lenght === 0
-    "create 20 20 2", // width height nbPlayers
-    // si games.length >= 1
-//    "joinGame", // -> idGame1
+    "listGames", // -> [] || [idGame1, idGame2] // Available games
+    joinOrCreateGame(),
     "populate 10",
     "print",
-    "move",
-    "move",
     "move",
     "close",
   ];
@@ -53,6 +57,9 @@ client.on("data", (data) => {
     gophers = JSON.parse(data.toString().match(/^created gophers : ([\[\],"a-z0-9:{}]*)/)[1]); // save gophers
   }
 
+  if (data.toString().includes("available games : ")) {
+    games = JSON.parse(data.toString().match(/^available games : ([\[\],"a-z0-9:{}]*)/)[1]); // save games
+  }
 
   if (isConnected && isReadyToSendCommand) {
     isReadyToSendCommand = false;

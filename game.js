@@ -53,6 +53,7 @@ module.exports = class Game {
       console.log(this.getScores());
     }
   }
+
   getScores(player = null) {
     let playerScore = `Your score : ${player.gophers.length}\r\n`;
     const allScores = Object.values(this.city.players)

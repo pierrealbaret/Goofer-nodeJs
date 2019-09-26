@@ -13,16 +13,7 @@ const net = require("net"),
     grid.forEach((row, index) => {
       console.log(`${index}|${row.join("|")}|`.underline);
     });
-  },
-  joinOrCreateGame = () => {
-    const cmdCreate = "create 20 20 2",
-      cmdJoinGame = "joinGame";
-    if (games.length === 0) {
-      return cmdCreate;
-    }
-    return `${cmdJoinGame} ${games[0]}`;
   };
-
 let isConnected = false,
   isReadyToSendCommand = false,
   gophers = [],
@@ -31,9 +22,11 @@ let isConnected = false,
   commands = [
     "initialize",
     "listGames", // -> [] || [idGame1, idGame2] // Available games
-    joinOrCreateGame(),
+    "joinOrCreateGame",
     "populate 10",
     "print",
+    "move",
+    "move",
     "move",
     "close",
   ];
@@ -73,7 +66,18 @@ client.on("data", (data) => {
 
         console.log(cmd);
         client.write(`${cmd}\r\n`);
-      } else {
+      } else if (command === 'joinOrCreateGame') {
+          let commandCreateOrJoin = '';
+          const cmdCreate = "create 20 20 2",
+            cmdJoinGame = "joinGame";
+          console.log('games', games);
+          if (games.length === 0) {
+             commandCreateOrJoin = cmdCreate;
+          } else {
+            commandCreateOrJoin = `${cmdJoinGame} ${games[ 0 ]}`;
+          }
+          client.write(`${commandCreateOrJoin}\r\n`);
+      }else {
         client.write(`${command}\r\n`);
       }
     }

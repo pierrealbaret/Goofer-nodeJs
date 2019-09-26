@@ -6,6 +6,7 @@ const readline = require("readline"),
   colors = require("colors"), // eslint-disable-line no-unused-vars
   City = require("./city"),
   Game = require("./game"),
+  Player = require("./Player"),
   createID = () => {
     "use strict";
     return crypto.randomBytes(16).toString("hex");
@@ -45,10 +46,10 @@ const server = net.createServer((socket) => {
       console.log("create game".blue);
       const [ _, width, height, nbPlayers ] = line.match(/^create ([0-9]+) ([0-9]+) ([0-9]+)$/);
       socket.gameId = createID();
-      currentGame = new Game(socket.gameId, nbPlayers);
+      currentGame = new Game(socket.gameId, parseInt(nbPlayers));
       games.push(currentGame);
-      currentGame.city = new City(socket, parseInt(width), parseInt(height));
-      currentGame.players.push(socket) ;
+      currentGame.city = new City(parseInt(width), parseInt(height));
+      currentGame.city.players = {[socket.id] : new Player(socket)};
       currentGame.city.print(socket.id);
       return endOfResponse();
 
@@ -62,12 +63,12 @@ const server = net.createServer((socket) => {
       socket.write(`available games : ${JSON.stringify(games.map((game) => game.id))}`);
       return endOfResponse();
 
-    } else if (line === "joinGame") {
+    } else if (line.includes("joinGame")) {
       console.log("join Game".blue);
       const [ _, gameId ] = line.match(/^joinGame ([a-z0-9]+)$/);
       socket.gameId = gameId;
       currentGame = games.find((game) => game.id === gameId);
-      currentGame.players.push(socket);
+      currentGame.city.players[socket.id] = new Player(socket);
       return endOfResponse();
 
     }
@@ -87,14 +88,15 @@ const server = net.createServer((socket) => {
         return endOfResponse();
 
       } else if (line.includes("move")) {
-        const params = line.match(/^move ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)/);
-
-        currentGame.city.move(
-          socket.id,
-          { x: parseInt(params[ 1 ]), y: parseInt(params[ 2 ]) },
-        { x: parseInt(params[ 3 ]), y: parseInt(params[ 4 ]) }
-            );
-        return endOfResponse();
+        // const params = line.match(/^move ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)/);
+        currentGame.addCommand(socket.id, line);
+        // currentGame.city.move(
+        //   socket.id,
+        //   { x: parseInt(params[ 1 ]), y: parseInt(params[ 2 ]) },
+        // { x: parseInt(params[ 3 ]), y: parseInt(params[ 4 ]) }
+        //     );
+        // return endOfResponse();
+        return;
       }
     }
 

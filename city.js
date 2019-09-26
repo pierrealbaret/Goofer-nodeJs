@@ -1,12 +1,10 @@
 const bresenham = require("bresenham-js");
 
 module.exports = class City {
-  constructor(socket, width = 10, height = 10) {
+  constructor(width = 10, height = 10) {
     this.width = width;
     this.height = height;
     this.grid = this.createGrid();
-    this.socket = socket;
-    this.gophers = {};
     this.players = {};
     this.rocks = this.addRock();
     this.fov = 3;
@@ -19,16 +17,15 @@ module.exports = class City {
     for (let i = 0; i < nbGophers; i++) {
       playersGophers.push(this.createRandomItem());
     }
-    this.gophers = { [playerId]: playersGophers };
-    this.players = { [playerId]: { color: this.getRandomColor()} };
-    console.log(this.players);
-    this.socket.write(`created gophers : ${JSON.stringify(this.gophers[playerId])}\r\n`);
+    this.players[playerId].gophers = playersGophers;
+    this.players[playerId].color = this.getRandomColor();
+    this.players[playerId].write(`created gophers : ${JSON.stringify(this.players[playerId].gophers)}`);
   }
 
   getAllGophers() {
-    return Object.keys(this.gophers)
+    return Object.keys(this.players)
       .map((playerId) => {
-        return this.gophers[playerId]
+        return this.players[playerId].gophers;
       })
       .reduce((acc, item) => {
         return acc.concat(item);
@@ -82,7 +79,7 @@ module.exports = class City {
     this.grid[ x ][ y ] = value;
   }
 
-  trueNewPosition(pos, oldPos) {
+  trueNewPosition(playerId, pos, oldPos) {
     let newPos = {
       x: pos.x,
       y: pos.y,
@@ -101,39 +98,45 @@ module.exports = class City {
     }
 
     if (this.isOccupied(newPos)) {
-      this.socket.write(`invalid move !!! ${JSON.stringify(oldPos)} -> ${JSON.stringify(newPos)}\r\n`.red);
+
+      this.players[playerId].write(`invalid move !!! ${JSON.stringify(oldPos)} -> ${JSON.stringify(newPos)}`.red);
       return oldPos;
     }
     return newPos;
   }
 
   move(playerId, oldPos, newPos) {
-    let newNewPos = this.trueNewPosition(newPos, oldPos);
+    let newNewPos = this.trueNewPosition(playerId, newPos, oldPos);
     this.oldPos = oldPos; // save
     this.newPos = newNewPos; // save
-    this.gophers[playerId]
-      .forEach((gopher) => {
-        if (gopher.x === oldPos.x && gopher.y === oldPos.y) {
-          gopher.x = newNewPos.x;
-          gopher.y = newNewPos.y;
-        }
-      });
+
+    if (this.players[playerId].gophers) {
+      this.players[playerId].gophers
+        .forEach((gopher) => {
+          if (gopher.x === oldPos.x && gopher.y === oldPos.y) {
+            gopher.x = newNewPos.x;
+            gopher.y = newNewPos.y;
+          }
+        });
+    }
     this.print(playerId);
   }
 
   getGopherInRange(x, y, playerId = null) {
-    if (playerId && this.gophers[ playerId ]) {
-      return this.gophers[playerId].filter((g) =>
+    if (playerId && this.players[ playerId ].gophers) {
+      return this.players[ playerId ].gophers.filter((g) =>
         (g.x >= x - this.fov && g.x <= x + this.fov) &&
         (g.y >= y - this.fov && g.y <= y + this.fov)
       )
     }
-    return Object.keys(this.gophers)
-      .map((pId) => {
-        return this.gophers[pId].filter((g) =>
-          (g.x >= x - this.fov && g.x <= x + this.fov) &&
-          (g.y >= y - this.fov && g.y <= y + this.fov)
-        )
+    return Object.values(this.players)
+      .map((player) => {
+        if (player.gophers) {
+          return player.gophers.filter((g) =>
+            (g.x >= x - this.fov && g.x <= x + this.fov) &&
+            (g.y >= y - this.fov && g.y <= y + this.fov)
+          )
+        }
       }).reduce((acc, item) => {
         return acc.concat(item);
       }, []);
@@ -194,7 +197,7 @@ module.exports = class City {
       return "R".cyan.bold;
     }
     if (playerId) {
-      if (this.gophers[playerId].filter((g) => g.x === x && g.y === y).length) {
+      if (this.players[playerId].gophers.filter((g) => g.x === x && g.y === y).length) {
         return "G"[this.players[playerId].color].bold;
       }
     } else {
@@ -220,11 +223,13 @@ module.exports = class City {
     this.grid.forEach((row, y) => {
       const newRow = [].concat(row).fill("░");
 
-      Object.keys(this.gophers)
-        .forEach((pId) => {
-          this.gophers[pId]
-            .filter((g) => g.y === y)
-            .forEach((g) => newRow[ g.x ] = "G"[ this.players[ pId ].color ].bold);
+      Object.values(this.players)
+        .forEach((player) => {
+          if (player.gophers) {
+            player.gophers
+              .filter((g) => g.y === y)
+              .forEach((g) => newRow[ g.x ] = "G"[ player.color ].bold);
+          }
         });
 
 
@@ -239,9 +244,9 @@ module.exports = class City {
 
 
     // client view
-    this.socket.write("Current Map is : \n".green);
+    this.players[playerId].write("Current Map is : ".green);
 
-    this.socket.write(` |${Array.from(Array(this.width).keys()).map((i)=> i.toString().slice(-1)).join("|")}| x\r\n`.underline);
+    this.players[playerId].write(` |${Array.from(Array(this.width).keys()).map((i)=> i.toString().slice(-1)).join("|")}| x`.underline);
 
     this.grid.forEach((row, y) => {
       const newRow = [];
@@ -256,9 +261,9 @@ module.exports = class City {
           newRow[x] = newRow[x].bgGreen;
         }
       });
-      this.socket.write(`${y.toString().slice((-1))}|${newRow.join("|")}|\r\n`.underline);
+      this.players[playerId].write(`${y.toString().slice((-1))}|${newRow.join("|")}|`.underline);
     });
-    this.socket.write("y\r\n");
+    this.players[playerId].write("y");
 
     this.oldPos = null;
     this.newPos = null;

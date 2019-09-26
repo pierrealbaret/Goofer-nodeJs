@@ -88,15 +88,8 @@ const server = net.createServer((socket) => {
         return endOfResponse();
 
       } else if (line.includes("move")) {
-        // const params = line.match(/^move ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)/);
         currentGame.addCommand(socket.id, line);
-        // currentGame.city.move(
-        //   socket.id,
-        //   { x: parseInt(params[ 1 ]), y: parseInt(params[ 2 ]) },
-        // { x: parseInt(params[ 3 ]), y: parseInt(params[ 4 ]) }
-        //     );
-        // return endOfResponse();
-        return;
+        return; // EOL will be sent when all commands was received !
       }
     }
 

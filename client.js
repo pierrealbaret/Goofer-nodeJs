@@ -55,11 +55,11 @@ client.on("data", (data) => {
   }
 
   if (data.toString().includes("created gophers : ")) {
-    gophers = JSON.parse(data.toString().match(/^created gophers : ([\[\],"a-z0-9:{}]*)/)[1]); // save gophers
+    gophers = JSON.parse(data.toString().match(/^created gophers : ([\[\],"a-z0-9:{}]*)/)[ 1 ]); // save gophers
   }
 
   if (data.toString().includes("available games : ")) {
-    games = JSON.parse(data.toString().match(/^available games : ([\[\],"a-z0-9:{}]*)/)[1]); // save games
+    games = JSON.parse(data.toString().match(/^available games : ([\[\],"a-z0-9:{}]*)/)[ 1 ]); // save games
   }
 
   if (isConnected && isReadyToSendCommand) {
@@ -68,25 +68,25 @@ client.on("data", (data) => {
     if (command) {
       console.log("Send command", `'${command}'`.blue);
       if (command === "move") {
-        let cmd = `move ${gophers[ 0 ].x} ${gophers[ 0 ].y} ${gophers[ 0 ].x+1} ${gophers[ 0 ].y+1}`;
-        gophers[0].x ++;
-        gophers[0].y ++;
+        let cmd = `move ${gophers[ 0 ].x} ${gophers[ 0 ].y} ${gophers[ 0 ].x + 1} ${gophers[ 0 ].y + 1}`;
+        gophers[ 0 ].x++;
+        gophers[ 0 ].y++;
 
         console.log(cmd);
         client.write(`${cmd}\r\n`);
-      } else if (command === 'joinOrCreateGame') {
-          let commandCreateOrJoin = '';
-          // width, height, nbPlayers, nbTurns, timout (seconds)
-          const cmdCreate = "create 20 20 3 3 10",
-            cmdJoinGame = "joinGame";
-          console.log('games', games);
-          if (games.length === 0) {
-             commandCreateOrJoin = cmdCreate;
-          } else {
-            commandCreateOrJoin = `${cmdJoinGame} ${games[ 0 ]}`;
-          }
-          client.write(`${commandCreateOrJoin}\r\n`);
-      }else {
+      } else if (command === "joinOrCreateGame") {
+        let commandCreateOrJoin = "";
+        // width, height, nbPlayers, nbTurns, timout (seconds)
+        const cmdCreate = "create 20 20 3 3 10",
+          cmdJoinGame = "joinGame";
+        console.log("games", games);
+        if (games.length === 0) {
+          commandCreateOrJoin = cmdCreate;
+        } else {
+          commandCreateOrJoin = `${cmdJoinGame} ${games[ 0 ]}`;
+        }
+        client.write(`${commandCreateOrJoin}\r\n`);
+      } else {
         client.write(`${command}\r\n`);
       }
     }

@@ -16,10 +16,10 @@ module.exports = class Game {
   processCommands() {
     console.log(this.commands.length, this.nbPlayers);
     if (this.city && this.commands.length === this.nbPlayers && this.nbTurns) {
-      this.nbTurns --;
-      while( this.commands.length > 0) {
-        const itemIndex = Math.floor(Math.random() * this.commands.length);
-        const command = this.commands[ itemIndex ];
+      this.nbTurns--;
+      while (this.commands.length > 0) {
+        const itemIndex = Math.floor(Math.random() * this.commands.length),
+          command = this.commands[ itemIndex ];
         this.commands.splice(itemIndex);
         this.process(command);
       }
@@ -40,8 +40,8 @@ module.exports = class Game {
     this.city.move(
       command.playerId,
       { x: parseInt(params[ 1 ]), y: parseInt(params[ 2 ]) },
-    { x: parseInt(params[ 3 ]), y: parseInt(params[ 4 ]) }
-        );
+      { x: parseInt(params[ 3 ]), y: parseInt(params[ 4 ]) }
+    );
   }
 
   displayResults() {
@@ -72,7 +72,7 @@ module.exports = class Game {
         player.write("End of game : Bye".red);
         player.socket.end();
         delete this.city.players[ player.id ];
-      })
+      });
     // TODO kill all client
   }
 

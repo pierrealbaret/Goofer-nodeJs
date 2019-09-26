@@ -17,15 +17,15 @@ module.exports = class City {
     for (let i = 0; i < nbGophers; i++) {
       playersGophers.push(this.createRandomItem());
     }
-    this.players[playerId].gophers = playersGophers;
-    this.players[playerId].color = this.getRandomColor();
-    this.players[playerId].write(`created gophers : ${JSON.stringify(this.players[playerId].gophers)}`);
+    this.players[ playerId ].gophers = playersGophers;
+    this.players[ playerId ].color = this.getRandomColor();
+    this.players[ playerId ].write(`created gophers : ${JSON.stringify(this.players[ playerId ].gophers)}`);
   }
 
   getAllGophers() {
     return Object.keys(this.players)
       .map((playerId) => {
-        return this.players[playerId].gophers;
+        return this.players[ playerId ].gophers;
       })
       .reduce((acc, item) => {
         return acc.concat(item);
@@ -42,7 +42,7 @@ module.exports = class City {
 
   createRandomItem() {
     const item = { x: this.getRandomInt(this.width), y: this.getRandomInt(this.height) };
-    if (! this.isOccupied(item)) {
+    if (!this.isOccupied(item)) {
       return item;
     }
     return this.createRandomItem();
@@ -61,7 +61,6 @@ module.exports = class City {
   }
 
   addRock() {
-    "use strict";
     let rocks = [];
     const nbRock = this.getRandomInt(Math.floor(Math.sqrt(this.width * this.height))) || 1;
     for (let i = 0; i < nbRock; i++) {
@@ -98,8 +97,7 @@ module.exports = class City {
     }
 
     if (this.isOccupied(newPos)) {
-
-      this.players[playerId].write(`invalid move !!! ${JSON.stringify(oldPos)} -> ${JSON.stringify(newPos)}`.red);
+      this.players[ playerId ].write(`invalid move !!! ${JSON.stringify(oldPos)} -> ${JSON.stringify(newPos)}`.red);
       return oldPos;
     }
     return newPos;
@@ -110,8 +108,8 @@ module.exports = class City {
     this.oldPos = oldPos; // save
     this.newPos = newNewPos; // save
 
-    if (this.players[playerId].gophers) {
-      this.players[playerId].gophers
+    if (this.players[ playerId ].gophers) {
+      this.players[ playerId ].gophers
         .forEach((gopher) => {
           if (gopher.x === oldPos.x && gopher.y === oldPos.y) {
             gopher.x = newNewPos.x;
@@ -125,17 +123,15 @@ module.exports = class City {
   getGopherInRange(x, y, playerId = null) {
     if (playerId && this.players[ playerId ].gophers) {
       return this.players[ playerId ].gophers.filter((g) =>
-        (g.x >= x - this.fov && g.x <= x + this.fov) &&
-        (g.y >= y - this.fov && g.y <= y + this.fov)
-      )
+        (g.x >= x - this.fov && g.x <= x + this.fov) && (g.y >= y - this.fov && g.y <= y + this.fov)
+      );
     }
     return Object.values(this.players)
       .map((player) => {
         if (player.gophers) {
           return player.gophers.filter((g) =>
-            (g.x >= x - this.fov && g.x <= x + this.fov) &&
-            (g.y >= y - this.fov && g.y <= y + this.fov)
-          )
+            (g.x >= x - this.fov && g.x <= x + this.fov) && (g.y >= y - this.fov && g.y <= y + this.fov)
+          );
         }
       }).reduce((acc, item) => {
         return acc.concat(item);
@@ -143,24 +139,24 @@ module.exports = class City {
   }
 
   isCellInRange(x, y, playerId = null) {
-    return this.getGopherInRange(x,y, playerId).length;
+    return this.getGopherInRange(x, y, playerId).length;
   }
 
   getCellsBetween(a, b) {
     // const delta = (b.y-a.y)/(b.x-a.x);
-    const pts = bresenham([ a.x, a.y ],[ b.x, b.y ]);
-    return pts.map((pt) => ({ x: pt[ 0 ], y: pt[ 1 ]}));
+    const pts = bresenham([ a.x, a.y ], [ b.x, b.y ]);
+    return pts.map((pt) => ({ x: pt[ 0 ], y: pt[ 1 ] }));
   }
 
   isCellVisible(x, y, playerId = null) {
-    const gophersInRange = this.getGopherInRange(x,y, playerId);
+    const gophersInRange = this.getGopherInRange(x, y, playerId);
     try {
       const cellVisibleForGophers = gophersInRange.map((g) => {
         if (x === g.x && y === g.y) { // cellule = gopher > on stop !
           throw "visible";
         }
 
-        const cells = this.getCellsBetween({x, y}, { x: g.x, y: g.y });
+        const cells = this.getCellsBetween({ x, y }, { x: g.x, y: g.y });
         // remove First & Last element (cell & gopher)
         cells.pop();
         cells.shift();
@@ -209,19 +205,17 @@ module.exports = class City {
           }
           return acc;
         }, "░");
-    } else {
-      if (this.getAllGophers().filter((g) => g.x === x && g.y === y).length) {
-        return "G".red.bold;
-      }
+    } else if (this.getAllGophers().filter((g) => g.x === x && g.y === y).length) {
+      return "G".red.bold;
     }
 
     return "░";
   }
 
   getRandomColor() {
-    const availableColors = ["black", "red", "green", "yellow", "blue", "magenta", "white", "gray" ];
+    const availableColors = [ "black", "red", "green", "yellow", "blue", "magenta", "white", "gray" ];
 
-    return availableColors[Math.floor(Math.random()*availableColors.length)];
+    return availableColors[ Math.floor(Math.random() * availableColors.length) ];
   }
 
   printServer() {
@@ -251,29 +245,31 @@ module.exports = class City {
     console.log("y");
   }
 
-  print(playerId, cells = null) {
+  print(playerId) {
 
     // client view
-    this.players[playerId].write("Current Map is : ".green);
+    this.players[ playerId ].write("Current Map is : ".green);
 
-    this.players[playerId].write(` |${Array.from(Array(this.width).keys()).map((i)=> i.toString().slice(-1)).join("|")}| x`.underline);
+    this.players[ playerId ].write(` |${Array.from(Array(this.width).keys()).map((i) => i.toString().slice(-1)).join("|")}| x`.underline);
 
     this.grid.forEach((row, y) => {
       const newRow = [];
-      row.forEach((cel, x) => { newRow.push(this.getVisibleItems(x, y, playerId))});
+      row.forEach((cel, x) => {
+        newRow.push(this.getVisibleItems(x, y, playerId));
+      });
 
       // display old / new gopherPos if changed
       row.forEach((cel, x) => {
-        if (this.oldPos && this.oldPos.x === x && this.oldPos.y === y ) {
-          newRow[x] = newRow[x].bgBlue;
+        if (this.oldPos && this.oldPos.x === x && this.oldPos.y === y) {
+          newRow[ x ] = newRow[ x ].bgBlue;
         }
-        if (this.newPos && this.newPos.x === x && this.newPos.y === y ) {
-          newRow[x] = newRow[x].bgGreen;
+        if (this.newPos && this.newPos.x === x && this.newPos.y === y) {
+          newRow[ x ] = newRow[ x ].bgGreen;
         }
       });
-      this.players[playerId].write(`${y.toString().slice((-1))}|${newRow.join("|")}|`.underline);
+      this.players[ playerId ].write(`${y.toString().slice((-1))}|${newRow.join("|")}|`.underline);
     });
-    this.players[playerId].write("y");
+    this.players[ playerId ].write("y");
 
     this.oldPos = null;
     this.newPos = null;

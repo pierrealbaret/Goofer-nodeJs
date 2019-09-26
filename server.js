@@ -98,6 +98,17 @@ const server = net.createServer((socket) => {
     endOfResponse();
   });
   rl.on("close", () => {
+    // clean player game
+    const currentGame = games.find((game) => game.id === socket.gameId);
+    delete currentGame.city.players[ socket.id ];
+    if (Object.keys(currentGame.city.players).length === 0) {
+      // no player in game > delete game !
+      const index = games.map((game) => {
+        return game.id;
+      })
+      .indexOf(socket.gameId);
+      games.splice(index, 1);
+    }
     console.log("closing stream".red);
   });
 

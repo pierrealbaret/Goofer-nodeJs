@@ -260,9 +260,6 @@ module.exports = class City {
     });
     this.socket.write("y\r\n");
 
-
-    this.socket.write("\r\n\r\n".cyan);
-
     this.oldPos = null;
     this.newPos = null;
   }

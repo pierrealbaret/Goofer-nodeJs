@@ -53,7 +53,7 @@ const server = net.createServer((socket) => {
       currentGame = new Game(socket.gameId, parseInt(nbPlayers), parseInt(nbTurns), parseInt(timout));
       games.push(currentGame);
       currentGame.city = new City(parseInt(width), parseInt(height));
-      currentGame.city.players = {[socket.id] : new Player(socket)};
+      currentGame.city.players = { [ socket.id ] : new Player(socket) };
       currentGame.city.print(socket.id);
       return endOfResponse();
 

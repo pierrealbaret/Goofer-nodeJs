@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 module.exports = class Game {
   constructor(id, nbPlayers = 1, nbTurns = 3, timeout = 1) {
     this.id = id;
@@ -26,7 +28,9 @@ module.exports = class Game {
       Object.values(this.city.players)
         .forEach((player) => {
           this.city.print(player.id);
-          return player.write("\r\n\r\n".cyan);
+          if (this.nbTurns !== 0) {
+            return player.write("\r\n\r\n".cyan);
+          }
         });
       this.city.printServer();
     }

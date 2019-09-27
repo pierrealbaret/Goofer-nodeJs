@@ -1,9 +1,10 @@
 /* eslint-disable no-console */
+/* eslint-disable no-unused-vars */
 
 const readline = require("readline"),
   net = require("net"),
   crypto = require("crypto"),
-  colors = require("colors"), // eslint-disable-line no-unused-vars
+  colors = require("colors"),
   City = require("./city"),
   Game = require("./game"),
   Player = require("./Player"),

@@ -17,8 +17,30 @@ let isConnected = false,
     "initialize",
     "listGames", // -> [] || [idGame1, idGame2] // Available games
     "joinOrCreateGame",
-    "populate 10",
+    "populate 25",
     "print",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
     "move",
     "move",
     "move",
@@ -49,7 +71,7 @@ client.on("data", (data) => {
   }
 
   if (data.toString().includes("created gophers : ")) {
-    gophers = JSON.parse(data.toString().match(/^created gophers : ([\[\],"a-z0-9:{}]*)/)[ 1 ]); // save gophers
+    gophers = JSON.parse(data.toString().match(/^created gophers : ([\[\],"A-Za-z0-9:{}]*)/)[ 1 ]); // save gophers
   }
 
   if (data.toString().includes("available games : ")) {
@@ -72,7 +94,7 @@ client.on("data", (data) => {
       } else if (command === "joinOrCreateGame") {
         let commandCreateOrJoin = "";
         // width, height, nbPlayers, nbTurns, timout (seconds)
-        const cmdCreate = "create 20 20 2 3 10",
+        const cmdCreate = "create 10 10 2 10 10",
           cmdJoinGame = "joinGame";
         console.log("games", games);
         if (games.length === 0) {

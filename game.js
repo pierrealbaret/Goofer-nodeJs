@@ -79,11 +79,12 @@ module.exports = class Game {
   getScores(player = null) {
     const allScores = Object.values(this.city.players)
       .reduce((acc, item) => {
-        return `${acc}Player :${item.id} -> ${item.gophers.length}\r\n`;
+        return `${acc}Player :${item.id} -> ${item.gophers.filter((g) => g.isAlive === "alive").length}\r\n`;
       }, "");
     if (player) {
-      let playerScore = `Your score : ${player.gophers.length}\r\n`;
-      return playerScore.red + allScores.yellow;
+      const playerScore = `Your score (${player.id}): ${player.gophers.filter((g) => g.isAlive === "alive").length}\r\n`[ player.color ].bold,
+        deadGophers = `dead list : ${JSON.stringify(player.gophers.filter((g) => g.isAlive !== "alive"))}\r\n`;
+      return playerScore.red + deadGophers.blue + allScores.yellow;
     }
     return allScores;
   }

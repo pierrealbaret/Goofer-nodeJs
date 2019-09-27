@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
-const bresenham = require("bresenham-js");
+const bresenham = require("bresenham-js"),
+  Gopher = require("./Gopher");
 
 module.exports = class City {
   constructor(width = 10, height = 10) {
@@ -11,12 +12,13 @@ module.exports = class City {
     this.fov = 2;
     this.oldPos = null;
     this.newPos = null;
+    this.availableColors = [ "black", "red", "green", "yellow", "blue", "magenta", "white", "gray" ];
   }
 
   populate(playerId, nbGophers = 10) {
     const playersGophers = [];
     for (let i = 0; i < nbGophers; i++) {
-      playersGophers.push(this.createRandomItem());
+      playersGophers.push(new Gopher(this.createRandomItem()));
     }
     this.players[ playerId ].gophers = playersGophers;
     this.players[ playerId ].color = this.getRandomColor();
@@ -24,9 +26,13 @@ module.exports = class City {
     this.players[ playerId ].availableCommands.populate = false;
   }
 
-  getAllGophers() {
+  getAllGophers(state = "alive") {
     return Object.keys(this.players)
       .map((playerId) => {
+        if (state === "alive" || state === "dead") {
+          return this.players[ playerId ].gophers.filter((g) => g.isAlive === state);
+        }
+
         return this.players[ playerId ].gophers;
       })
       .reduce((acc, item) => {
@@ -88,7 +94,6 @@ module.exports = class City {
   }
 
   trueNewPosition(playerId, newPos, oldPos) {
-
     if ((newPos.x < 0) || (newPos.x >= this.width) || (newPos.y < 0) || (newPos.y >= this.height || this.isRock(newPos))) {
       this.players[ playerId ].write("invalid move !!!".red);
       return oldPos;
@@ -97,16 +102,40 @@ module.exports = class City {
   }
 
   move(playerId, oldPos, newPos) {
-    let newNewPos = this.trueNewPosition(playerId, newPos, oldPos);
+    let pos = this.trueNewPosition(playerId, newPos, oldPos);
+    console.log(`move player: ${playerId} ${JSON.stringify(oldPos)} -> ${JSON.stringify(pos)}`.green);
+
+    if (this.isGopher(pos)) {
+      const g = this.getAllGophers("alive").find((g) => g.x === newPos.x && g.y === newPos.y);
+      if (g) {
+        g.isAlive = "dead";
+        Object.values(this.players)
+          .forEach((player) => {
+            if (player.gophers.find((gopher) => gopher.x === g.x && gopher.y === g.y)) {
+              player.write(`Killed by ${playerId}, ${JSON.stringify(oldPos)} -> ${JSON.stringify(newPos)}\r\n`.bold.red);
+
+              console.log(`${playerId}, ${JSON.stringify(oldPos)} -> ${JSON.stringify(newPos)}`.bold.red.bgYellow);
+              console.log("██╗  ██╗██╗██╗     ██╗     ".bold.red.bgYellow);
+              console.log("██║ ██╔╝██║██║     ██║     ".bold.red.bgYellow);
+              console.log("█████╔╝ ██║██║     ██║     ".bold.red.bgYellow);
+              console.log("██╔═██╗ ██║██║     ██║     ".bold.red.bgYellow);
+              console.log("██║  ██╗██║███████╗███████╗".bold.red.bgYellow);
+              console.log("╚═╝  ╚═╝╚═╝╚══════╝╚══════╝".bold.red.bgYellow);
+              console.log("                           ".bold.red.bgYellow);
+            }
+          });
+      }
+
+    }
     this.oldPos = oldPos; // save
-    this.newPos = newNewPos; // save
+    this.newPos = pos; // save
 
     if (this.players[ playerId ].gophers) {
       this.players[ playerId ].gophers
         .forEach((gopher) => {
           if (gopher.x === oldPos.x && gopher.y === oldPos.y) {
-            gopher.x = newNewPos.x;
-            gopher.y = newNewPos.y;
+            gopher.x = pos.x;
+            gopher.y = pos.y;
           }
         });
     }
@@ -188,8 +217,9 @@ module.exports = class City {
     if (playerId) {
       return Object.values(this.players)
         .map((player) => {
-          if (player.gophers.filter((g) => g.x === x && g.y === y).length) {
-            return "G"[ player.color ].bold;
+          const g = player.gophers.find((g) => g.x === x && g.y === y);
+          if (g) {
+            return `${g.isAlive ? "G": "X"}`[ player.color ].bold;
           }
         })
         .reduce((acc, item) => {
@@ -206,9 +236,8 @@ module.exports = class City {
   }
 
   getRandomColor() {
-    const availableColors = [ "black", "red", "green", "yellow", "blue", "magenta", "white", "gray" ];
-
-    return availableColors[ Math.floor(Math.random() * availableColors.length) ];
+    const index = Math.floor(Math.random() * this.availableColors.length);
+    return this.availableColors.splice(index, 1);
   }
 
   printServer() {

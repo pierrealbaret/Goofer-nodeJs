@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const bresenham = require("bresenham-js");
 
 module.exports = class City {
@@ -221,7 +222,7 @@ module.exports = class City {
   printServer() {
     // server view
     console.log("Current Server Map is : ".cyan);
-    console.log(` |${Array.from(Array(this.width).keys()).map((i)=> i.toString().slice(-1)).join("|")}| x`.underline);
+    console.log(` |${Array.from(Array(this.width).keys()).map((i) => i.toString().slice(-1)).join("|")}| x`.underline);
     this.grid.forEach((row, y) => {
       const newRow = [].concat(row).fill("░");
 
@@ -239,7 +240,9 @@ module.exports = class City {
       // if (cells) { // display green ray
       //   cells.filter((c) => c.y === y).map((c) => newRow[ c.x ] = newRow[ c.x ].bgGreen);
       // }
-      const rrr = newRow.map((c, x) => { return this.isCellInRange(x, y) ? c : c.gray});
+      const rrr = newRow.map((c, x) => {
+        return this.isCellInRange(x, y) ? c : c.gray;
+      });
       console.log(`${y.toString().slice((-1))}|${rrr.join("|")}|`.underline);
     });
     console.log("y");

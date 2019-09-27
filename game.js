@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 module.exports = class Game {
   constructor(id, nbPlayers = 1, nbTurns = 3, timeout = 1) {
     this.id = id;

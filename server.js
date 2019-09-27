@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+/* eslint-disable no-unused-vars */
 
 const readline = require("readline"),
   net = require("net"),

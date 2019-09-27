@@ -85,14 +85,6 @@ module.exports = class City {
     return rocks;
   }
 
-  getCase(x, y) {
-    return this.grid[ x ][ y ];
-  }
-
-  setCase(x, y, value) {
-    this.grid[ x ][ y ] = value;
-  }
-
   trueNewPosition(playerId, newPos, oldPos) {
     if ((newPos.x < 0) || (newPos.x >= this.width) || (newPos.y < 0) || (newPos.y >= this.height || this.isRock(newPos))) {
       this.players[ playerId ].write("invalid move !!!".red);
@@ -106,12 +98,12 @@ module.exports = class City {
     console.log(`move player: ${playerId} ${JSON.stringify(oldPos)} -> ${JSON.stringify(pos)}`.green);
 
     if (this.isGopher(pos)) {
-      const g = this.getAllGophers("alive").find((g) => g.x === newPos.x && g.y === newPos.y);
-      if (g) {
-        g.isAlive = "dead";
+      const allAliveGophers = this.getAllGophers("alive").find((g) => g.x === newPos.x && g.y === newPos.y);
+      if (allAliveGophers) {
+        allAliveGophers.isAlive = "dead";
         Object.values(this.players)
           .forEach((player) => {
-            if (player.gophers.find((gopher) => gopher.x === g.x && gopher.y === g.y)) {
+            if (player.gophers.find((gPlayer) => gPlayer.x === allAliveGophers.x && gPlayer.y === allAliveGophers.y)) {
               player.write(`Killed by ${playerId}, ${JSON.stringify(oldPos)} -> ${JSON.stringify(newPos)}\r\n`.bold.red);
 
               console.log(`${playerId}, ${JSON.stringify(oldPos)} -> ${JSON.stringify(newPos)}`.bold.red.bgYellow);
@@ -139,7 +131,6 @@ module.exports = class City {
           }
         });
     }
-    this.print(playerId);
   }
 
   getGopherInRange(x, y, playerId = null) {
@@ -217,13 +208,16 @@ module.exports = class City {
     if (playerId) {
       return Object.values(this.players)
         .map((player) => {
-          const g = player.gophers.find((g) => g.x === x && g.y === y);
+          const g = player.gophers.find((gPlayer) => gPlayer.x === x && gPlayer.y === y);
           if (g) {
-            return `${g.isAlive ? "G": "X"}`[ player.color ].bold;
+            return `${g.isAlive === "alive" ? "G" : "X"}`[ player.color ].bold;
           }
         })
         .reduce((acc, item) => {
           if (item) {
+            if (acc === "G" && item === "X") {
+              return "G";
+            }
             acc = item;
           }
           return acc;

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const net = require("net"),
   colors = require("colors"), // eslint-disable-line no-unused-vars
-  readline = require("readline"),
+  readline = require("readline"), // eslint-disable-line no-unused-vars
 
   client = net.createConnection({ port: 8000 }, () => {
     "use strict";
@@ -11,36 +11,12 @@ const net = require("net"),
 let isConnected = false,
   isReadyToSendCommand = false,
   gophers = [],
-  grid = [],
   games = [],
   commands = [
     "initialize",
     "listGames", // -> [] || [idGame1, idGame2] // Available games
     "joinOrCreateGame",
     "populate 25",
-    "print",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
-    "move",
     "move",
     "move",
     "move",
@@ -94,7 +70,7 @@ client.on("data", (data) => {
       } else if (command === "joinOrCreateGame") {
         let commandCreateOrJoin = "";
         // width, height, nbPlayers, nbTurns, timout (seconds)
-        const cmdCreate = "create 10 10 2 10 10",
+        const cmdCreate = "create 10 10 2 5 10",
           cmdJoinGame = "joinGame";
         console.log("games", games);
         if (games.length === 0) {

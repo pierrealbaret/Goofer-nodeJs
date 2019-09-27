@@ -42,7 +42,7 @@ const games = [],
     const rl = readline.createInterface(socket);
 
     rl.on("line", (line) => {
-      console.log("retrieving a line".green, `'${line}'`.red);
+      console.log(`${socket.id} retrieving a line`.green, `'${line}'`.red);
 
       let currentGame = null;
       if (line === "initialize" && isPlayerInGame(games, socket.id) === false) {

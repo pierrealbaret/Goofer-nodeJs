@@ -16,7 +16,7 @@ let isConnected = false,
     "initialize",
     "listGames", // -> [] || [idGame1, idGame2] // Available games
     "joinOrCreateGame",
-    "populate 25",
+    "populate 5",
     "move",
     "move",
     "move",
@@ -70,7 +70,7 @@ client.on("data", (data) => {
       } else if (command === "joinOrCreateGame") {
         let commandCreateOrJoin = "";
         // width, height, nbPlayers, nbTurns, timout (seconds)
-        const cmdCreate = "create 10 10 2 5 10",
+        const cmdCreate = "create 5 5 2 5 10",
           cmdJoinGame = "joinGame";
         console.log("games", games);
         if (games.length === 0) {

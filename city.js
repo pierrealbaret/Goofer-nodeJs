@@ -34,12 +34,19 @@ module.exports = class City {
       }, []);
   }
 
-  isOccupied(item) {
-    const allGophers = this.getAllGophers();
-    if (this.rocks) {
-      return allGophers.find((g) => g.x === item.x && g.y === item.y) || this.rocks.find((r) => r.x === item.x && r.y === item.y);
+  isOccupied(pos) {
+    return this.isRock(pos) || this.isGopher(pos);
+  }
+
+  isRock(pos) {
+    if (this.rocks !== undefined) {
+      return this.rocks.find((r) => r.x === pos.x && r.y === pos.y);
     }
-    return allGophers.find((g) => g.x === item.x && g.y === item.y);
+    return false;
+  }
+
+  isGopher(pos) {
+    return this.getAllGophers().find((g) => g.x === pos.x && g.y === pos.y);
   }
 
   createRandomItem() {
@@ -80,26 +87,10 @@ module.exports = class City {
     this.grid[ x ][ y ] = value;
   }
 
-  trueNewPosition(playerId, pos, oldPos) {
-    let newPos = {
-      x: pos.x,
-      y: pos.y,
-    };
-    if (pos.x < 0) {
-      newPos.x = 0;
-    }
-    if (pos.x > this.width) {
-      newPos.x = this.width - 1;
-    }
-    if (pos.y < 0) {
-      newPos.y = 0;
-    }
-    if (pos.y > this.height) {
-      newPos.y = this.height - 1;
-    }
+  trueNewPosition(playerId, newPos, oldPos) {
 
-    if (this.isOccupied(newPos)) {
-      this.players[ playerId ].write(`invalid move !!! ${JSON.stringify(oldPos)} -> ${JSON.stringify(newPos)}`.red);
+    if ((newPos.x < 0) || (newPos.x >= this.width) || (newPos.y < 0) || (newPos.y >= this.height || this.isRock(newPos))) {
+      this.players[ playerId ].write("invalid move !!!".red);
       return oldPos;
     }
     return newPos;

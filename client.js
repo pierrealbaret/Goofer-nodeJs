@@ -68,6 +68,7 @@ client.on("data", (data) => {
 
         console.log(cmd);
         client.write(`${cmd}\r\n`);
+
       } else if (command === "joinOrCreateGame") {
         let commandCreateOrJoin = "";
         // width, height, nbPlayers, nbTurns, timout (seconds)

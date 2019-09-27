@@ -8,6 +8,8 @@ module.exports = class Game {
     this.nbTurns = nbTurns;
     this.timeout = timeout * 1000;
     this.commands = [];
+    this.timerExpired = false;
+    this.timer = null;
   }
 
   addCommand(playerId, command) {
@@ -18,9 +20,17 @@ module.exports = class Game {
     this.city.players[ playerId ].write("Command already send, wait for other players\r\n");
   }
 
+  restartTimerTurns() {
+    this.timer = setTimeout(() => {
+      this.timerExpired = true;
+      this.processCommands();
+    }, this.timeout);
+  }
+
   processCommands() {
     console.log(this.commands.length, this.nbPlayers);
-    if (this.city && this.commands.length === this.nbPlayers && this.nbTurns) {
+    if (this.city && this.commands.length === this.nbPlayers && this.nbTurns || this.timerExpired) {
+      clearTimeout(this.timer);
       this.nbTurns--;
       while (this.commands.length > 0) {
         const itemIndex = Math.floor(Math.random() * this.commands.length),
@@ -36,6 +46,11 @@ module.exports = class Game {
           }
         });
       this.city.printServer();
+
+      if (this.nbTurns) { // End of turn : restart timer turn
+        this.timerExpired = false;
+        this.restartTimerTurns();
+      }
     }
     if (this.nbTurns === 0) {
       this.finishGame();

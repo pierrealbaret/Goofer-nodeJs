@@ -21,15 +21,15 @@ module.exports = class Game {
       this.nbTurns--;
       while (this.commands.length > 0) {
         const itemIndex = Math.floor(Math.random() * this.commands.length),
-          command = this.commands[ itemIndex ];
+          order = this.commands[ itemIndex ];
         this.commands.splice(itemIndex);
-        this.process(command);
+        this.process(order);
       }
       Object.values(this.city.players)
         .forEach((player) => {
           this.city.print(player.id);
           if (this.nbTurns !== 0) {
-            return player.write("\r\n\r\n".cyan);
+            player.write("\r\n\r\n".cyan);
           }
         });
       this.city.printServer();
@@ -39,10 +39,10 @@ module.exports = class Game {
     }
   }
 
-  process(command) {
-    const params = command.command.match(/^move ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)/);
+  process(order) {
+    const params = order.command.match(/^move ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)/);
     this.city.move(
-      command.playerId,
+      order.playerId,
       { x: parseInt(params[ 1 ]), y: parseInt(params[ 2 ]) },
       { x: parseInt(params[ 3 ]), y: parseInt(params[ 4 ]) }
     );
@@ -59,12 +59,12 @@ module.exports = class Game {
   }
 
   getScores(player = null) {
-    let playerScore = `Your score : ${player.gophers.length}\r\n`;
     const allScores = Object.values(this.city.players)
       .reduce((acc, item) => {
         return `${acc}Player :${item.id} -> ${item.gophers.length}\r\n`;
       }, "");
     if (player) {
+      let playerScore = `Your score : ${player.gophers.length}\r\n`;
       return playerScore.red + allScores.yellow;
     }
     return allScores;

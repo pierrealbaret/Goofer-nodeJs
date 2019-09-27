@@ -6,14 +6,8 @@ const net = require("net"),
   client = net.createConnection({ port: 8000 }, () => {
     "use strict";
     console.log("connected to server!".red);
-  }),
-  displayGrid = (grid) => {
-    "use strict";
-    console.log(` |${Array.from(Array(grid[ 0 ].length).keys()).join("|")}|`.underline);
-    grid.forEach((row, index) => {
-      console.log(`${index}|${row.join("|")}|`.underline);
-    });
-  };
+  });
+
 let isConnected = false,
   isReadyToSendCommand = false,
   gophers = [],
@@ -77,7 +71,7 @@ client.on("data", (data) => {
       } else if (command === "joinOrCreateGame") {
         let commandCreateOrJoin = "";
         // width, height, nbPlayers, nbTurns, timout (seconds)
-        const cmdCreate = "create 20 20 3 3 10",
+        const cmdCreate = "create 20 20 2 3 10",
           cmdJoinGame = "joinGame";
         console.log("games", games);
         if (games.length === 0) {

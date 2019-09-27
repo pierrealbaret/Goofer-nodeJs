@@ -5,8 +5,8 @@ const readline = require("readline"),
   net = require("net"),
   crypto = require("crypto"),
   colors = require("colors"),
-  City = require("./city"),
-  Game = require("./game"),
+  City = require("./City"),
+  Game = require("./Game"),
   Player = require("./Player"),
   createID = () => {
     "use strict";

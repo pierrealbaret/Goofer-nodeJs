@@ -4,6 +4,9 @@ module.exports = class Player {
     this.gophers = [];
     this.socket = socket;
     this.color = "red";
+    this.availableCommands = {
+      populate: true,
+    };
   }
 
   write(lines) {

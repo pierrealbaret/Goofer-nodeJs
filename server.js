@@ -11,6 +11,14 @@ const readline = require("readline"),
   createID = () => {
     "use strict";
     return crypto.randomBytes(16).toString("hex");
+  },
+  isPlayerInGame = (games, playerId) => {
+    "use strict";
+    return !!games.filter((game) => game.city.players[ playerId ]).length;
+  },
+  isAvailableCommand = (game, playerId, cmd) => {
+    "use strict";
+    return game.city.players[ playerId ].availableCommands[ cmd ];
   };
 
 const games = [],
@@ -37,13 +45,14 @@ const games = [],
       console.log("retrieving a line".green, `'${line}'`.red);
 
       let currentGame = null;
-      if (line === "initialize") {
+      if (line === "initialize" && isPlayerInGame(games, socket.id) === false) {
         console.log("initialize connexion".blue);
         socket.write(`Your socket id is : ${socket.id} \r\n`.green, "utf-8");
         return endOfResponse();
 
-      } else if (line.includes("create")) {
+      } else if (line.includes("create") && isPlayerInGame(games, socket.id) === false) {
         console.log("create game".blue);
+
         const [ _, width, height, nbPlayers, nbTurns, timout ] = line.match(/^create ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)$/);
         socket.gameId = createID();
         currentGame = new Game(socket.gameId, parseInt(nbPlayers), parseInt(nbTurns), parseInt(timout));
@@ -64,7 +73,7 @@ const games = [],
         socket.write(`available games : ${JSON.stringify(games.map((game) => game.id))}`);
         return endOfResponse();
 
-      } else if (line.includes("joinGame")) {
+      } else if (line.includes("joinGame") && isPlayerInGame(games, socket.id) === false) {
         console.log("join Game".blue);
         const [ _, gameId ] = line.match(/^joinGame ([a-z0-9]+)$/);
         socket.gameId = gameId;
@@ -77,7 +86,7 @@ const games = [],
       currentGame = games.find((game) => game.id === socket.gameId);
       if (currentGame) {
         console.log(line.toString());
-        if (line.includes("populate")) {
+        if (line.includes("populate") && isAvailableCommand(currentGame, socket.id, "populate")) {
           console.log("populate gophers".blue);
           const [ _, nbGophers ] = line.match(/^populate ([0-9]+)$/);
           currentGame.city.populate(socket.id, parseInt(nbGophers));
@@ -89,6 +98,7 @@ const games = [],
           return endOfResponse();
 
         } else if (line.includes("move")) {
+          socket.write(`waiting for others players ... (turns ${currentGame.nbTurns})\r\n`);
           currentGame.addCommand(socket.id, line);
           return; // EOL will be sent when all commands was received !
 

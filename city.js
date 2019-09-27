@@ -21,6 +21,7 @@ module.exports = class City {
     this.players[ playerId ].gophers = playersGophers;
     this.players[ playerId ].color = this.getRandomColor();
     this.players[ playerId ].write(`created gophers : ${JSON.stringify(this.players[ playerId ].gophers)}`);
+    this.players[ playerId ].availableCommands.populate = false;
   }
 
   getAllGophers() {

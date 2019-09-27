@@ -11,8 +11,11 @@ module.exports = class Game {
   }
 
   addCommand(playerId, command) {
-    this.commands.push({ playerId, command });
-    this.processCommands();
+    if (!this.commands.find((order) => order.playerId === playerId)) {
+      this.commands.push({ playerId, command });
+      return this.processCommands();
+    }
+    this.city.players[ playerId ].write("Command already send, wait for other players\r\n");
   }
 
   processCommands() {
@@ -77,7 +80,6 @@ module.exports = class Game {
         player.socket.end();
         delete this.city.players[ player.id ];
       });
-    // TODO kill all client
   }
 
   finishGame() {

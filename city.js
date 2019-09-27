@@ -86,13 +86,13 @@ module.exports = class City {
     if (pos.x < 0) {
       newPos.x = 0;
     }
-    if (pos.x >= this.width) {
+    if (pos.x > this.width) {
       newPos.x = this.width - 1;
     }
     if (pos.y < 0) {
       newPos.y = 0;
     }
-    if (pos.y >= this.height) {
+    if (pos.y > this.height) {
       newPos.y = this.height - 1;
     }
 

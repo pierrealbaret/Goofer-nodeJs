@@ -8,8 +8,8 @@ const
     if (currentGame !== null) {
       console.log("print city".blue); // eslint-disable-line no-console
       currentGame.city.print(socket.id);
-      return endOfResponse(socket);
     }
+    return endOfResponse(socket);
   };
 
 module.exports = {

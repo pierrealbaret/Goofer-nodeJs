@@ -10,8 +10,8 @@ const
       console.log("populate gophers".blue); // eslint-disable-line no-console
       const [ nbGophers ] = params;
       currentGame.city.populate(socket.id, nbGophers);
-      return endOfResponse(socket);
     }
+    return endOfResponse(socket);
   };
 
 module.exports = {

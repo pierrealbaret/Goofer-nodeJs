@@ -12,8 +12,8 @@ const
       socket.gameId = gameId;
       const currentGame = games.find((game) => game.id === gameId);
       currentGame.city.players[ socket.id ] = new Player(socket);
-      return endOfResponse(socket);
     }
+    return endOfResponse(socket);
   };
 
 module.exports = {

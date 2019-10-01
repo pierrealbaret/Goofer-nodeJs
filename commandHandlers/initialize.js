@@ -7,8 +7,8 @@ const
     if (isPlayerInGame(games, socket.id) === false) {
       console.log("initialize connexion".blue); // eslint-disable-line no-console
       socket.write(`Your socket id is : ${socket.id} \r\n`.green, "utf-8");
-      return endOfResponse(socket);
     }
+    return endOfResponse(socket);
   };
 
 module.exports = {

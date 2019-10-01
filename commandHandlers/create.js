@@ -19,8 +19,8 @@ const
       currentGame.city = new City(width, height);
       currentGame.city.players = { [ socket.id ]: new Player(socket) };
       currentGame.city.print(socket.id);
-      return endOfResponse(socket);
     }
+    return endOfResponse(socket);
   };
 
 module.exports = {

@@ -12,6 +12,10 @@ const fs = require("fs"),
           const requiredFile = require(`${__dirname}/${file}`); // eslint-disable-line global-require
           if (requiredFile.name && requiredFile.handler) {
             logs.push(` - command: '${requiredFile.name}' -> ${file} chargé`.blue);
+            if (requiredFile.description) {
+              logs.push(`   ${requiredFile.description}`.gray);
+              logs.push("");
+            }
             acc[ requiredFile.name ] = requiredFile.handler;
             return acc;
           }

@@ -16,5 +16,6 @@ const
 
 module.exports = {
   name: "populate",
+  description: "populate 10 -> nb de gophers",
   handler: handler,
 };

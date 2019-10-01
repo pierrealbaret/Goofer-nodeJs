@@ -10,5 +10,6 @@ const
 
 module.exports = {
   name: "close",
+  description: "close client connexion",
   handler: handler,
 };

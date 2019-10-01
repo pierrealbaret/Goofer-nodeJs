@@ -14,5 +14,6 @@ const
 
 module.exports = {
   name: "print",
+  description: "display the map (player view)",
   handler: handler,
 };

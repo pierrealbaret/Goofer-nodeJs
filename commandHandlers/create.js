@@ -25,6 +25,7 @@ const
 
 module.exports = {
   name: "create",
+  description: "create width height nbPlayers nbTurns timout",
   handler: handler,
 };
 

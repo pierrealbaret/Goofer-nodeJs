@@ -14,5 +14,6 @@ const handler = (parameters) => {
 
 module.exports = {
   name: "move",
+  description: "move posX posY newPosX newPosY",
   handler: handler,
 };

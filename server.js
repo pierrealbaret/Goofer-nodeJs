@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const readline = require("readline"),
   net = require("net"),
-  colors = require("colors"),
+  colors = require("colors"), // eslint-disable-line no-unused-vars
   commands = require("./commandHandlers"),
   createID = require("./helpers/createID"),
   getCommand = (line) => {
@@ -9,9 +9,6 @@ const readline = require("readline"),
     return line.split(" ")[ 0 ];
   };
 
-/* eslint-disable no-unused-vars */
-// console.log(commands[ "move" ]({ a: 10, b: 7 }));
-// console.log(commands);
 const games = [],
   server = net.createServer((socket) => {
     "use strict";
@@ -83,6 +80,6 @@ server.on("error", (err) => {
 
 server.listen(8000, () => {
   "use strict";
-  console.log("server ready".red);
+  console.log("server ready to handle commands".red);
 });
 

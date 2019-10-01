@@ -14,9 +14,12 @@ let isConnected = false,
   games = [],
   commands = [
     "initialize",
+    "test 12 3",
     "listGames", // -> [] || [idGame1, idGame2] // Available games
     "joinOrCreateGame",
+    "listGames", // -> [] || [idGame1, idGame2] // Available games
     "populate 5",
+    "print",
     "move",
     "move",
     "move",

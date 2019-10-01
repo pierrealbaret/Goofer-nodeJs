@@ -1,38 +1,27 @@
 /* eslint-disable no-console */
-/* eslint-disable no-unused-vars */
-
 const readline = require("readline"),
   net = require("net"),
-  crypto = require("crypto"),
   colors = require("colors"),
-  City = require("./City"),
-  Game = require("./Game"),
-  Player = require("./Player"),
-  createID = () => {
+  commands = require("./commandHandlers"),
+  createID = require("./helpers/createID"),
+  getCommand = (line) => {
     "use strict";
-    return crypto.randomBytes(16).toString("hex");
-  },
-  isPlayerInGame = (games, playerId) => {
-    "use strict";
-    return !!games.filter((game) => game.city.players[ playerId ]).length;
-  },
-  isAvailableCommand = (game, playerId, cmd) => {
-    "use strict";
-    return game.city.players[ playerId ].availableCommands[ cmd ];
+    return line.split(" ")[ 0 ];
   };
 
+/* eslint-disable no-unused-vars */
+// console.log(commands[ "move" ]({ a: 10, b: 7 }));
+// console.log(commands);
 const games = [],
   server = net.createServer((socket) => {
     "use strict";
-    const endOfResponse = () => {
-      socket.write("\r\n\r\n".cyan);
-    };
 
+    const endOfResponse = require("./helpers/endOfResponse"); // eslint-disable-line global-require
     socket.id = createID();
 
     // 'connection' listener
     socket.write("client connected\r\n");
-    endOfResponse();
+    endOfResponse(socket);
 
 
     socket.on("end", () => {
@@ -43,71 +32,28 @@ const games = [],
 
     rl.on("line", (line) => {
       console.log(`${socket.id} retrieving a line`.green, `'${line}'`.red);
+      const cmd = getCommand(line),
+        getParams = (commandLine) => {
 
-      let currentGame = null;
-      if (line === "initialize" && isPlayerInGame(games, socket.id) === false) {
-        console.log("initialize connexion".blue);
-        socket.write(`Your socket id is : ${socket.id} \r\n`.green, "utf-8");
-        return endOfResponse();
-
-      } else if (line.includes("create") && isPlayerInGame(games, socket.id) === false) {
-        console.log("create game".blue);
-
-        const [ _, width, height, nbPlayers, nbTurns, timout ] = line.match(/^create ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)$/);
-        socket.gameId = createID();
-        currentGame = new Game(socket.gameId, parseInt(nbPlayers), parseInt(nbTurns), parseInt(timout));
-        games.push(currentGame);
-        currentGame.city = new City(parseInt(width), parseInt(height));
-        currentGame.city.players = { [ socket.id ]: new Player(socket) };
-        currentGame.city.print(socket.id);
-        return endOfResponse();
-
-      } else if (line === "close") {
-        console.log("close client".blue);
-        endOfResponse();
-        socket.end();
-        return;
-
-      } else if (line === "listGames") {
-        console.log("list Games".blue);
-        socket.write(`available games : ${JSON.stringify(games.map((game) => game.id))}`);
-        return endOfResponse();
-
-      } else if (line.includes("joinGame") && isPlayerInGame(games, socket.id) === false) {
-        console.log("join Game".blue);
-        const [ _, gameId ] = line.match(/^joinGame ([a-z0-9]+)$/);
-        socket.gameId = gameId;
-        currentGame = games.find((game) => game.id === gameId);
-        currentGame.city.players[ socket.id ] = new Player(socket);
-        return endOfResponse();
-
+          return {
+            games,
+            socket,
+            params: commandLine
+              .split(" ")
+              .splice(1)
+              .map((param) => {
+                if (!Number.isNaN(parseInt(param))) {
+                  return parseInt(param);
+                }
+                return param;
+              }),
+          };
+        };
+      if (commands[ cmd ] !== undefined) {
+        return commands[ cmd ](getParams(line));
       }
-
-      currentGame = games.find((game) => game.id === socket.gameId);
-      if (currentGame) {
-        console.log(line.toString());
-        if (line.includes("populate") && isAvailableCommand(currentGame, socket.id, "populate")) {
-          console.log("populate gophers".blue);
-          const [ _, nbGophers ] = line.match(/^populate ([0-9]+)$/);
-          currentGame.city.populate(socket.id, parseInt(nbGophers));
-          return endOfResponse();
-
-        } else if (line === "print") {
-          console.log("print city".blue);
-          currentGame.city.print(socket.id);
-          return endOfResponse();
-
-        } else if (line.includes("move")) {
-          socket.write(`waiting for others players ... (turns ${currentGame.nbTurns})\r\n`);
-          currentGame.addCommand(socket.id, line);
-          return; // EOL will be sent when all commands was received !
-
-        }
-      }
-
-
-      socket.write("Unknow command".rainbow);
-      endOfResponse();
+      console.log("Unknown command ".red + cmd.blue);
+      return endOfResponse(socket);
     });
 
     rl.on("close", () => {

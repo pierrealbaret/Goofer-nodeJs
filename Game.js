@@ -114,7 +114,7 @@ module.exports = class Game {
       turnLeft: this.nbTurns,
       gameId: this.id,
       nbPlayers: this.nbPlayers,
-      timout: this.timeout / 1000,
+      timeout: this.timeout / 1000,
     };
   }
 };

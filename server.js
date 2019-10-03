@@ -35,6 +35,7 @@ const games = [],
           return {
             games,
             socket,
+            commands,
             params: commandLine
               .split(" ")
               .splice(1)

@@ -16,7 +16,10 @@ const fs = require("fs"),
               logs.push(`   ${requiredFile.description}`.gray);
               logs.push("");
             }
-            acc[ requiredFile.name ] = requiredFile.handler;
+            acc[ requiredFile.name ] = {
+              fn: requiredFile.handler,
+              description: requiredFile.description,
+            };
             return acc;
           }
           logs.push(`Le option handler ${file} n'est pas pris en compte`.red);

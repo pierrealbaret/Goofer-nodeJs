@@ -5,7 +5,7 @@ const
 
     const { games, socket } = parameters;
     console.log("list Games".blue); // eslint-disable-line no-console
-    socket.write(`available games : ${JSON.stringify(games.map((game) => game.id))}`);
+    socket.emit("info", { games: games.map((game) => game.id) });
     return endOfResponse(socket);
   };
 

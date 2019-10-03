@@ -18,7 +18,8 @@ const fs = require("fs"),
       });
   },
   app = require("http").createServer(handler),
-  io = require("socket.io")(app);
+  io = require("socket.io")(app),
+  games = [];
 
 
 // console.log(commands);
@@ -27,8 +28,9 @@ io.on("connection", (socket) => {
   "use strict";
 
   const getParams = (data) => {
-
+    // console.log("data -> ",data);
     return {
+      games,
       socket,
       commands,
       params: data,
@@ -45,11 +47,6 @@ io.on("connection", (socket) => {
       socket.on(cmd, (data) => commands[ cmd ].fn(getParams(data)));
     });
 
-
-  // socket.on("help", (data) => commands.help(getParams(data)));
-  socket.on("my other event", (data) => {
-    console.log(data);
-  });
   socket.on("toto", (data) => {
     console.log("toto => ", data);
   });

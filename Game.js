@@ -103,4 +103,18 @@ module.exports = class Game {
     this.displayResults();
     this.destroyGame();
   }
+
+  getInfo() {
+    return {
+      city: {
+        width: this.city.width,
+        height: this.city.height,
+        fov: this.city.fov,
+      },
+      turnLeft: this.nbTurns,
+      gameId: this.id,
+      nbPlayers: this.nbPlayers,
+      timout: this.timeout / 1000,
+    };
+  }
 };

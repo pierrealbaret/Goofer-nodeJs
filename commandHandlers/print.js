@@ -1,5 +1,4 @@
 const
-  endOfResponse = require("../helpers/endOfResponse"),
   handler = (parameters) => {
     "use strict";
 
@@ -9,7 +8,6 @@ const
       console.log("print city".blue); // eslint-disable-line no-console
       currentGame.city.print(socket.id);
     }
-    return endOfResponse(socket);
   };
 
 module.exports = {
@@ -17,3 +15,4 @@ module.exports = {
   description: "display the map (player view)",
   handler: handler,
 };
+

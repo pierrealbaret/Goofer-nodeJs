@@ -262,7 +262,7 @@ module.exports = class City {
   print(playerId) {
 
     // client view
-    this.players[ playerId ].write("Current Map is : ".green);
+    this.players[ playerId ].write("print", "Current Map is : ");
 
     this.players[ playerId ].write(` |${Array.from(Array(this.width).keys()).map((i) => i.toString().slice(-1)).join("|")}| x`.underline);
 

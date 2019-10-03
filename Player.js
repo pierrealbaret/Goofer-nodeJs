@@ -9,7 +9,7 @@ module.exports = class Player {
     };
   }
 
-  write(lines) {
-    this.socket.write(`${lines}\r\n`);
+  write(event, data) {
+    this.socket.emit(event, data);
   }
 };

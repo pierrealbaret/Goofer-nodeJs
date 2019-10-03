@@ -1,14 +1,13 @@
 const
   isPlayerInGame = require("../helpers/isPlayerInGame"),
-  endOfResponse = require("../helpers/endOfResponse"),
   handler = (parameters) => {
     "use strict";
     const { games, socket } = parameters;
+    // console.log(socket.id);
     if (isPlayerInGame(games, socket.id) === false) {
       console.log("initialize connexion".blue); // eslint-disable-line no-console
-      socket.write(`Your socket id is : ${socket.id} \r\n`.green, "utf-8");
+      socket.emit("initialize", socket.id);
     }
-    return endOfResponse(socket);
   };
 
 module.exports = {

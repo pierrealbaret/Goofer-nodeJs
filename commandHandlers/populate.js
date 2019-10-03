@@ -1,5 +1,4 @@
 const
-  endOfResponse = require("../helpers/endOfResponse"),
   isAvailableCommand = require("../helpers/isAvailableCommand"),
   handler = (parameters) => {
     "use strict";
@@ -11,7 +10,6 @@ const
       const [ nbGophers ] = params;
       currentGame.city.populate(socket.id, nbGophers);
     }
-    return endOfResponse(socket);
   };
 
 module.exports = {

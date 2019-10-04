@@ -41,6 +41,8 @@ io.on("connection", (socket) => {
   console.log(socket.id + " connected".red);
   socket.emit("news", { hello: "world", id: socket.id });
 
+  commands.listGames.fn({ socket, games });
+
 
   Object.keys(commands)
     .forEach((cmd) => {
@@ -49,6 +51,24 @@ io.on("connection", (socket) => {
 
   socket.on("toto", (data) => {
     console.log("toto => ", data);
+  });
+
+  socket.on("disconnect", (reason) => {
+    // clean player game
+    const currentGame = games.find((game) => game.id === socket.gameId);
+    if (currentGame) {
+      delete currentGame.city.players[ socket.id ];
+      if (Object.keys(currentGame.city.players).length === 0) {
+        // no player in game > delete game !
+        const index = games.map((game) => {
+          return game.id;
+        })
+          .indexOf(socket.gameId);
+        games.splice(index, 1);
+      }
+    }
+
+    console.log("closing stream".red + reason);
   });
 });
 

@@ -68,7 +68,7 @@ io.on("connection", (socket) => {
       }
     }
 
-    console.log("closing stream".red + reason);
+    console.log("closing stream ".red + reason);
   });
 });
 

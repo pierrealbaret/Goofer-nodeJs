@@ -1,11 +1,9 @@
 const
-  endOfResponse = require("../helpers/endOfResponse"),
   handler = (parameters) => {
     "use strict";
     const { socket } = parameters;
     console.log("close client".blue); // eslint-disable-line no-console
-    endOfResponse(socket);
-    return socket.end();
+    return socket.disconnect(true); // FIX ME
   };
 
 module.exports = {

@@ -4,6 +4,7 @@ const
   Game = require("../Game"),
   Player = require("../Player"),
   isPlayerInGame = require("../helpers/isPlayerInGame"),
+  listGames = require("./listGames"),
   handler = (parameters) => {
     "use strict";
 
@@ -21,6 +22,7 @@ const
       console.log("game list" , games.map((game) => game.id)); // eslint-disable-line no-console
       socket.emit("create", "Game created");
       socket.emit("joinGame", { gameId: currentGame.id });
+      listGames.handler({ games, socket }); // send event listGames on new Game list
       return;
     }
     socket.emit("create", "player already in game -> game not created");

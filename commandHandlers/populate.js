@@ -6,7 +6,7 @@ const
     const { games, socket, params } = parameters,
       currentGame = games.find((game) => game.id === socket.gameId);
     if (currentGame !== null && isAvailableCommand(currentGame, socket.id, "populate")) {
-      console.log("populate gophers".blue); // eslint-disable-line no-console
+      console.log("populate -> ".blue + socket.name); // eslint-disable-line no-console
       const [ nbGophers ] = params;
       currentGame.city.populate(socket.id, nbGophers);
     }

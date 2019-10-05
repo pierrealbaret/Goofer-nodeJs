@@ -5,11 +5,11 @@ const
     const { games, socket } = parameters,
       currentGame = games.find((game) => game.id === socket.gameId);
     if (currentGame !== null) {
-      console.log("print city".blue, socket.id); // eslint-disable-line no-console
+      console.log("print -> ".blue, socket.name); // eslint-disable-line no-console
       // currentGame.city.print(socket.id); // TODO
     }
     // TEST ALEX
-    console.log(`print : ${socket.id}`);
+    console.log(`print : ${socket.id}`); // eslint-disable-line no-console
     socket.emit("print", [
       [ { item: "?" }, { item: "." }, { item: "?" }, { item: "." } ],
       [ { item: "G", player: "id1" }, { item: "R" }, { item: "R" }, { item: "." } ],

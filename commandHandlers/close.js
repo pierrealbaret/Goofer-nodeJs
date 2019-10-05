@@ -2,7 +2,7 @@ const
   handler = (parameters) => {
     "use strict";
     const { socket } = parameters;
-    console.log("close client".blue); // eslint-disable-line no-console
+    console.log("close client -> ".blue + socket.name); // eslint-disable-line no-console
     return socket.disconnect(true); // FIX ME
   };
 

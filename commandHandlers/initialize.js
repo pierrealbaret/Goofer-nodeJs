@@ -5,7 +5,7 @@ const
     const { games, socket } = parameters;
     // console.log(socket.id);
     if (isPlayerInGame(games, socket.id) === false) {
-      console.log("initialize connexion".blue); // eslint-disable-line no-console
+      console.log("initialize -> ".blue + socket.name); // eslint-disable-line no-console
       socket.emit("initialize", socket.id);
     }
   };

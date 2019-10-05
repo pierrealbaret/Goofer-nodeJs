@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const fs = require("fs"),
-  colors = require("colors"),
+  colors = require("colors"), // eslint-disable-line no-unused-vars
   createID = require("./helpers/createID"),
   commands = require("./commandHandlers"),
   handler = (req, res) => {
@@ -19,6 +19,7 @@ const fs = require("fs"),
   },
   app = require("http").createServer(handler),
   io = require("socket.io")(app),
+  faker = require("faker/locale/fr"),
   games = [];
 
 
@@ -38,9 +39,15 @@ io.on("connection", (socket) => {
   };
 
   socket.id = createID();
-  console.log(socket.id + " connected".red);
-  socket.emit("news", { hello: "world", id: socket.id });
 
+  socket.name = faker.name.findName();
+  socket.image = faker.image.avatar();
+
+  console.log(`${"connected -> ".red + socket.name} (${socket.id})`);
+  console.log("news -> ".blue + socket.name, { hello: "world", id: socket.id, name: socket.name, image: socket.image });
+  socket.emit("news", { hello: "world", id: socket.id, name: socket.name, image: socket.image });
+
+  /** @param {{string}} commands.listGames */
   commands.listGames.fn({ socket, games });
 
 
@@ -50,7 +57,7 @@ io.on("connection", (socket) => {
     });
 
   socket.on("toto", (data) => {
-    console.log("toto => ", data);
+    console.log("toto -> ".blue + socket.name, data);
   });
 
   socket.on("disconnect", (reason) => {
@@ -68,7 +75,7 @@ io.on("connection", (socket) => {
       }
     }
 
-    console.log("closing stream ".red + reason);
+    console.log("closing stream -> ".red + socket.name, reason);
   });
 });
 

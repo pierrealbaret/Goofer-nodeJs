@@ -92,7 +92,7 @@ module.exports = class City {
 
   move(playerId, oldPos, newPos) {
     let pos = this.trueNewPosition(playerId, oldPos, newPos);
-    console.log(`move player: ${playerId} ${JSON.stringify(oldPos)} -> ${JSON.stringify(pos)}`[this.players[ playerId ].color ]);
+    console.log(`move player: ${playerId} ${JSON.stringify(oldPos)} -> ${JSON.stringify(pos)}`[ this.players[ playerId ].color ]);
 
     if (this.isGopher(pos) && oldPos.x !== pos.x && oldPos.y !== pos.y) {
       const allAliveGophers = this.getAllGophers("alive").find((g) => g.x === newPos.x && g.y === newPos.y);
@@ -161,7 +161,7 @@ module.exports = class City {
     const gophersInRange = this.getGopherInRange(x, y, playerId);
     try {
       const cellVisibleForGophers = gophersInRange.map((g) => {
-        if (x === g.x && y === g.y) { // cellule = gopher > on stop !
+        if (x === g.x && y === g.y) { // cell = gopher > on stop !
           throw "visible";
         }
 
@@ -242,12 +242,18 @@ module.exports = class City {
           if (player.gophers) {
             player.gophers
               .filter((g) => g.y === y)
-              .forEach((g) => newRow[ g.x ] = "G"[ player.color ].bold);
+              .forEach((g) => {
+                newRow[ g.x ] = "G"[ player.color ].bold;
+                return newRow;
+              });
           }
         });
 
 
-      this.rocks.filter((r) => r.y === y).map((r) => newRow[ r.x ] = "R".cyan.bold);
+      this.rocks.filter((r) => r.y === y).map((r) => {
+        newRow[ r.x ] = "R".cyan.bold;
+        return newRow;
+      });
       // if (cells) { // display green ray
       //   cells.filter((c) => c.y === y).map((c) => newRow[ c.x ] = newRow[ c.x ].bgGreen);
       // }

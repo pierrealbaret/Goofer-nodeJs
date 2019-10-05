@@ -2,11 +2,10 @@ const
   handler = (parameters) => {
     "use strict";
 
-    const { games, socket, params } = parameters;
-
-    console.log("info Game".blue, socket.id); // eslint-disable-line no-console
-    const { gameId } = params,
+    const { games, socket, params } = parameters,
+      { gameId } = params,
       currentGame = games.find((game) => game.id === gameId);
+    console.log("info Game -> ".blue, socket.name, gameId); // eslint-disable-line no-console
     if (currentGame !== undefined) {
       socket.emit("infoGame", currentGame.getInfo());
     } else {

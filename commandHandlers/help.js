@@ -3,7 +3,7 @@ const
     "use strict";
 
     const { socket, commands } = parameters;
-
+    console.log("help -> ".blue, socket.name); // eslint-disable-line no-console
     socket.emit("help", Object.keys(commands)
       .map((cmd) => {
         return {

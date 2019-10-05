@@ -10,7 +10,7 @@ const
 
     const { games, socket, params } = parameters;
     if (isPlayerInGame(games, socket.id) === false) {
-      console.log("create game".blue, socket.id); // eslint-disable-line no-console
+      console.log("create game -> ".blue, socket.name); // eslint-disable-line no-console
 
       const { width, height, nbPlayers, nbTurns, timout } = params;
       socket.gameId = createID();
@@ -19,7 +19,6 @@ const
       currentGame.city = new City(width, height);
       currentGame.city.players = { [ socket.id ]: new Player(socket) };
       currentGame.city.print(socket.id);
-      console.log("game list" , games.map((game) => game.id)); // eslint-disable-line no-console
       socket.emit("create", "Game created");
       socket.emit("joinGame", { gameId: currentGame.id });
       listGames.handler({ games, socket }); // send event listGames on new Game list

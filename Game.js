@@ -115,6 +115,7 @@ module.exports = class Game {
       gameId: this.id,
       nbPlayers: this.nbPlayers,
       timeout: this.timeout / 1000,
+      lastUpdate: Date.now(),
     };
   }
 };

@@ -1,4 +1,16 @@
 const
+  getRandomItem = () => {
+    "use strict";
+
+    const items = [
+      { item: "G", player: "id1" },
+      { item: "G", player: "id2" },
+      { item: "R" },
+      { item: "?" },
+      { item: "." },
+    ];
+    return items[ Math.floor(Math.random() * items.length) ];
+  },
   handler = (parameters) => {
     "use strict";
 
@@ -11,9 +23,9 @@ const
     // TEST ALEX
     console.log(`print : ${socket.id}`); // eslint-disable-line no-console
     socket.emit("print", [
-      [ { item: "?" }, { item: "." }, { item: "?" }, { item: "." } ],
-      [ { item: "G", player: "id1" }, { item: "R" }, { item: "R" }, { item: "." } ],
-      [ { item: "." }, { item: "G", player: "id2" }, { item: "R" }, { item: "R" } ],
+      [ getRandomItem(), getRandomItem(), getRandomItem(), getRandomItem() ],
+      [ getRandomItem(), getRandomItem(), getRandomItem(), getRandomItem() ],
+      [ getRandomItem(), getRandomItem(), getRandomItem(), getRandomItem() ],
     ]);
   };
 

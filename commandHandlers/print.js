@@ -4,7 +4,7 @@ const
 
     const { games, socket } = parameters,
       currentGame = games.find((game) => game.id === socket.gameId);
-    if (currentGame !== null) {
+    if (currentGame !== undefined) {
       console.log("print -> ".blue, socket.name); // eslint-disable-line no-console
       currentGame.city.print(socket.id);
     }

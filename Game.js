@@ -5,6 +5,7 @@ module.exports = class Game {
     this.id = id;
     this.city = null;
     this.nbPlayers = nbPlayers;
+    this.maxTurns = nbTurns;
     this.nbTurns = nbTurns;
     this.timeout = timeout * 1000;
     this.commands = [];
@@ -105,6 +106,7 @@ module.exports = class Game {
   }
 
   getInfo() {
+    console.log();
     return {
       city: {
         width: this.city.width,
@@ -112,10 +114,19 @@ module.exports = class Game {
         fov: this.city.fov,
       },
       turnLeft: this.nbTurns,
+      turnMax: this.maxTurns,
       gameId: this.id,
       nbPlayers: this.nbPlayers,
       timeout: this.timeout / 1000,
       lastUpdate: Date.now(),
+      players: Object.values(this.city.players)
+        .map((player) => {
+          return {
+            id: player.id,
+            name: player.socket.name,
+            image: player.socket.image,
+          };
+        }),
     };
   }
 };

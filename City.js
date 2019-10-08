@@ -15,7 +15,11 @@ module.exports = class City {
 
   populate(playerId, nbGophers = 10) {
     for (let i = 0; i < nbGophers; i++) {
-      this.players[ playerId ].gophers.push(new Gopher(this.createRandomItem()));
+      this.players[ playerId ]
+        .gophers
+        .push(
+          new Gopher(Object.assign(this.createRandomItem(), { playerId }))
+        );
     }
     // this.players[ playerId ].gophers = playersGophers;
     this.players[ playerId ].color = this.getRandomColor();
@@ -207,13 +211,13 @@ module.exports = class City {
         .map((player) => {
           const g = player.gophers.find((gPlayer) => gPlayer.x === x && gPlayer.y === y);
           if (g) {
-            return g.isAlive === "alive" ? { item: "G" } : { item: "X" };
+            return g.isAlive === "alive" ? { item: "G", playerId: g.playerId } : { item: "X", playerId: g.playerId };
           }
         })
         .reduce((acc, item) => {
           if (item) {
             if (acc.item === "G" && item.item === "X") {
-              return { item: "G" };
+              return { item: "G", playerId: item.playerId };
             }
             return item;
           }

@@ -10,8 +10,13 @@ const
       const { gameId } = params;
       socket.gameId = gameId;
       const currentGame = games.find((game) => game.id === gameId);
-      currentGame.city.players[ socket.id ] = new Player(socket);
-      socket.emit("joinGame", { gameId: currentGame.id });
+      if (currentGame) {
+        currentGame.city.players[ socket.id ] = new Player(socket);
+        socket.emit("joinGame", { gameId: currentGame.id });
+      } else {
+        console.log(`${gameId} not found ! : unable to join game`); // eslint-disable-line no-console
+        socket.emit("info", { errorMessage: `${gameId} not found ! : unable to join game` });
+      }
       return;
     }
     console.log("Player already in a game -> ".blue, socket.name, socket.id); // eslint-disable-line no-console

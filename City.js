@@ -21,6 +21,7 @@ module.exports = class City {
     this.players[ playerId ].color = this.getRandomColor();
     this.players[ playerId ].write(`created gophers : ${JSON.stringify(this.players[ playerId ].gophers)}`);
     this.players[ playerId ].availableCommands.populate = false;
+    this.print(playerId);
   }
 
   getAllGophers(state = "alive") {
@@ -193,36 +194,36 @@ module.exports = class City {
 
   getVisibleItems(x, y, playerId = null) {
     if (!this.isCellInRange(x, y, playerId)) {
-      return "?".gray;
+      return { item: "?" };
     }
     if (!this.isCellVisible(x, y, playerId)) {
-      return "?".gray;
+      return { item: "?" };
     }
     if (this.rocks.filter((r) => r.x === x && r.y === y).length) {
-      return "R".cyan.bold;
+      return { item: "R" };
     }
     if (playerId) {
       return Object.values(this.players)
         .map((player) => {
           const g = player.gophers.find((gPlayer) => gPlayer.x === x && gPlayer.y === y);
           if (g) {
-            return `${g.isAlive === "alive" ? "G" : "X"}`[ player.color ].bold;
+            return g.isAlive === "alive" ? { item: "G" } : { item: "X" };
           }
         })
         .reduce((acc, item) => {
           if (item) {
-            if (acc === "G" && item === "X") {
-              return "G";
+            if (acc.item === "G" && item.item === "X") {
+              return { item: "G" };
             }
             return item;
           }
           return acc;
-        }, "░");
+        }, { item: "." });
     } else if (this.getAllGophers().filter((g) => g.x === x && g.y === y).length) {
-      return "G".red.bold;
+      return { item: "G" };
     }
 
-    return "░";
+    return { item: "." };
   }
 
   getRandomColor() {
@@ -267,12 +268,13 @@ module.exports = class City {
 
   print(playerId) {
 
+
     // client view
-    this.players[ playerId ].write("print", "Current Map is : ");
 
-    this.players[ playerId ].write(` |${Array.from(Array(this.width).keys()).map((i) => i.toString().slice(-1)).join("|")}| x`.underline);
 
-    this.grid.forEach((row, y) => {
+    // this.players[ playerId ].write(` |${Array.from(Array(this.width).keys()).map((i) => i.toString().slice(-1)).join("|")}| x`.underline);
+
+    const grid = this.grid.map((row, y) => {
       const newRow = [];
       row.forEach((cel, x) => {
         newRow.push(this.getVisibleItems(x, y, playerId));
@@ -288,11 +290,14 @@ module.exports = class City {
         }
       });
       this.players[ playerId ].write(`${y.toString().slice((-1))}|${newRow.join("|")}|`.underline);
+      return newRow;
     });
-    this.players[ playerId ].write("y");
+    // this.players[ playerId ].write("y");
 
     this.players[ playerId ].oldPos = null;
     this.players[ playerId ].newPos = null;
+
+    this.players[ playerId ].write("print", grid);
   }
 
 };

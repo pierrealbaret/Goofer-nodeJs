@@ -1,0 +1,15 @@
+<script src="/socket.io/socket.io.js"></script>
+<a onclick="test()">test</a>
+<script>
+  const socket = io('http://localhost:8000');
+  socket.on('news', function (data) {
+    socket.emit('toto', data.id);
+    socket.id = data.id;
+    console.log(data);
+    socket.emit('my other event', { my: 'data' });
+  });
+
+  const test = () => {
+    socket.emit('toto', { msg: 'test btn', id: socket.id });
+  };
+</script>

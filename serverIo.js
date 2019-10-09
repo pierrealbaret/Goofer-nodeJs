@@ -65,6 +65,11 @@ io.on("connection", (socket) => {
     const currentGame = games.find((game) => game.id === socket.gameId);
     if (currentGame) {
       delete currentGame.city.players[ socket.id ];
+      Object.values(currentGame.city.players)
+        .map((player) => {
+          currentGame.city.print(player.socket.id);
+        });
+
       if (Object.keys(currentGame.city.players).length === 0) {
         // no player in game > delete game !
         const index = games.map((game) => {

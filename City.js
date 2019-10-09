@@ -8,6 +8,11 @@ module.exports = class City {
     this.height = height;
     this.grid = this.createGrid();
     this.players = {};
+    this.writeAll = (event, msg) => {
+      Object.values(this.players).map((player) => {
+        player.socket.emit(event, msg);
+      });
+    };
     this.rocks = this.addRock();
     this.fov = 2;
     this.availableColors = [ "black", "red", "green", "yellow", "blue", "magenta", "white", "gray" ];
@@ -25,7 +30,10 @@ module.exports = class City {
     this.players[ playerId ].color = this.getRandomColor();
     this.players[ playerId ].write(`created gophers : ${JSON.stringify(this.players[ playerId ].gophers)}`);
     this.players[ playerId ].availableCommands.populate = false;
-    this.print(playerId);
+    Object.values(this.players)
+      .map((player) => {
+        this.print(player.id);
+      });
   }
 
   getAllGophers(state = "alive") {
@@ -54,7 +62,14 @@ module.exports = class City {
   }
 
   isGopher(pos) {
-    return this.getAllGophers("deadOrAlive").find((g) => g.x === pos.x && g.y === pos.y);
+    return this
+      .getAllGophers("deadOrAlive")
+      .find((g) => {
+        if (g) {
+          return g.x === pos.x && g.y === pos.y;
+        }
+        return false;
+      });
   }
 
   createRandomItem() {
@@ -135,7 +150,7 @@ module.exports = class City {
   }
 
   getGopherInRange(x, y, playerId = null) {
-    if (playerId && this.players[ playerId ].gophers) {
+    if (playerId && this.players[ playerId ] && this.players[ playerId ].gophers) {
       return this.players[ playerId ].gophers.filter((g) =>
         (g.x >= x - this.fov && g.x <= x + this.fov) && (g.y >= y - this.fov && g.y <= y + this.fov)
       );

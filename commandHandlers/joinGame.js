@@ -13,7 +13,11 @@ const
       if (currentGame) {
         currentGame.city.players[ socket.id ] = new Player(socket);
         // socket.emit("joinGame", { gameId: currentGame.id });
-        currentGame.city.writeAll("joinGame", { gameId: currentGame.id });
+        currentGame.city.writeAll("joinGame", 
+        { 
+          gameId: currentGame.id,
+          user:socket.id
+        });
         // Object.values(currentGame.city.players).map(() => {
         //   socket.emit("joinGame", { gameId: currentGame.id });
         // });

@@ -2,9 +2,8 @@
 const fs = require("fs"),
   colors = require("colors"), // eslint-disable-line no-unused-vars
   createID = require("./helpers/createID"),
-  whoIsThere=require("./helpers/whoIsThere")
-  commands = require("./commandHandlers"),
-
+  whoIsThere = require("./helpers/whoIsThere");
+commands = require("./commandHandlers"),
 
 
   handler = (req, res) => {
@@ -22,7 +21,7 @@ const fs = require("fs"),
       });
   },
 
-app = require("http").createServer(handler),
+  app = require("http").createServer(handler),
   io = require("socket.io")(app),
   faker = require("faker/locale/fr"),
   games = [];
@@ -48,16 +47,29 @@ playersConnected = [],
     socket.image = faker.image.avatar();
     playersConnected.push({
       player: socket.name,
-      id: socket.id
-    })
-    console.log("###################", playersConnected)
+      id: socket.id,
+    });
+    console.log("###################", playersConnected);
 
     console.log(`${"connected -> ".red + socket.name} (${socket.id})`);
-    console.log("news -> ".blue + socket.name, { hello: "world", id: socket.id, name: socket.name, image: socket.image });
-    socket.emit("news", { hello: "world", id: socket.id, name: socket.name, image: socket.image });
+    console.log("news -> ".blue + socket.name, {
+      hello: "world",
+      id: socket.id,
+      name: socket.name,
+      image: socket.image
+    });
+    socket.emit("news", {
+      hello: "world",
+      id: socket.id,
+      name: socket.name,
+      image: socket.image
+    });
 
     /** @param {{string}} commands.listGames */
-    commands.listGames.fn({ socket, games });
+    commands.listGames.fn({
+      socket,
+      games
+    });
 
 
     Object.keys(commands)
@@ -82,17 +94,17 @@ playersConnected = [],
         if (Object.keys(currentGame.city.players).length === 0) {
           // no player in game > delete game !
           const index = games.map((game) => {
-            return game.id;
-          })
+              return game.id;
+            })
             .indexOf(socket.gameId);
           games.splice(index, 1);
         }
       }
-      playersConnected = playersConnected.filter(player => player.id !== socket.id)
+      playersConnected = playersConnected.filter((player) => player.id !== socket.id);
       console.log("closing stream -> ".red + socket.name, reason);
     });
     setInterval(
-    ()=>whoIsThere(socket, playersConnected),3000);
+      () => whoIsThere(socket, playersConnected), 3000);
   });
 
 app.listen(8000);

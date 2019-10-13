@@ -17,10 +17,14 @@ const
       const currentGame = new Game(socket.gameId, nbPlayers, nbTurns, timout);
       games.push(currentGame);
       currentGame.city = new City(width, height);
-      currentGame.city.players = { [ socket.id ]: new Player(socket) };
+      currentGame.city.players = { [socket.id]: new Player(socket) };
       currentGame.city.print(socket.id);
       socket.emit("create", "Game created");
-      socket.emit("joinGame", { gameId: currentGame.id });
+      currentGame.city.writeAll("joinGame",
+        {
+          gameId: currentGame.id,
+          user: socket.id
+        });
       listGames.handler({ games, socket }); // send event listGames on new Game list
       return;
     }

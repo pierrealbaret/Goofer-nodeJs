@@ -6,8 +6,7 @@
   "author": "pljarlegan <pl.jarlegan@citae.fr>",
   "license": "MIT",
   "scripts": {
-    "client": "node client.js",
-    "server": "nodemon server.js",
+    "start": "node serverIo.js",
     "serverIo": "nodemon serverIo.js"
   },
   "devDependencies": {

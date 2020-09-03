@@ -84,4 +84,6 @@ io.on("connection", (socket) => {
   });
 });
 
-app.listen(8000);
+app.listen((process.env.PORT !== undefined) ? parseInt(process.env.PORT) : 8000);
+
+console.log('SERVER CONNECTED ON PORT : '.blue + `${(process.env.PORT !== undefined) ? parseInt(process.env.PORT) : 8000}`.red );
